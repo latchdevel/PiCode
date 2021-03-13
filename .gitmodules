@@ -1,0 +1,4 @@
+[submodule "libs/OutputPrint"]
+	path = libs/OutputPrint
+	url = https://github.com/latchdevel/OutputPrint.git
+	branch = master
