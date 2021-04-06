@@ -15,17 +15,15 @@
   You should have received a copy of the GNU General Public License
   along with library. If not, see <http://www.gnu.org/licenses/>
 
-  Modified by Jorge Rivera Feb 2021:
-  - Add options.h
-  - Add devices
-  - Del char *old_content;
+  Copyright (c) 2021 Jorge Rivera. All right reserved. LGPL-3.0.
+  Feb 2021:
+  - Add options.h and struct options_t *options;
+  - Add typedef struct protocol_devices_t and struct protocol_devices_t *devices;
+  - Delete char *old_content; ESPiLight special, used to compare repeated messages
 */
 
 #ifndef _PROTOCOL_H_
 #define _PROTOCOL_H_
-
-//from ../core/options.h
-//#define options_add(options, id, name, argtype, conftype, vartype, def, mask)
 
 #include <stdint.h>
 #include "../core/json.h"
@@ -84,7 +82,7 @@ typedef struct protocol_t {
   //short multipleId;
   //short config;
   //short masterOnly;
-  struct options_t *options; // Modified by Jorge Rivera Feb 2021
+  struct options_t *options; 
   struct JsonNode *message;
 
   uint8_t repeats;
@@ -102,6 +100,7 @@ typedef struct protocol_t {
     void (*parseCode)(void);
     void (*parseCommand)(struct JsonNode *code);
   };
+  
   int (*validate)(void);
   int (*createCode)(JsonNode *code);
   int (*checkValues)(JsonNode *code);
@@ -109,9 +108,6 @@ typedef struct protocol_t {
   void (*printHelp)(void);
   void (*gc)(void);
   //void (*threadGC)(void);
-
-  /* ESPiLight special, used to compare repeated messages*/
-  //char *old_content; // Jorge Rivera suprime at feb 2021
 } protocol_t;
 
 typedef struct protocols_t {

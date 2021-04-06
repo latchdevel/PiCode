@@ -1,3 +1,12 @@
+/*
+ 	PiCode Library https://github.com/latchdevel/PiCode
+
+    Copyright (c) 2021 Jorge Rivera. All right reserved.
+    License GNU Lesser General Public License v3.0.
+
+	protocol_headers.h from ESPiLight project.
+*/
+
 #include "433.92/alecto_ws1700.h"
 #include "433.92/alecto_wsd17.h"
 #include "433.92/alecto_wx500.h"
@@ -30,7 +39,7 @@
 #include "433.92/logilink_switch.h"
 #include "433.92/mumbi.h"
 #include "433.92/nexus.h"
-// #include "433.92/ninjablocks_weather.h"
+#include "433.92/ninjablocks_weather.h"  // (MIN_PULSE_LENGTH*PULSE_DIV) // warning: result of comparison of constant 71910 with expression of type 'uint16_t'
 #include "433.92/pollin.h"
 #include "433.92/quigg_gt1000.h"
 #include "433.92/quigg_gt7000.h"
@@ -47,6 +56,10 @@
 #include "433.92/techlico_switch.h"
 #include "433.92/teknihall.h"
 #include "433.92/tfa.h"
-// #include "433.92/tfa2017.h"
+#include "433.92/tfa2017.h"  // MAX_RAW_LENGTH = 400 // warning: result of comparison of constant 400 with expression of type 'uint8_t' (aka 'unsigned char')
 #include "433.92/tfa30.h"
 #include "433.92/x10.h"
+
+#include "433.92/rev_v1.h"  // Rev Switches v1
+#include "433.92/rev_v2.h"  // Rev Switches v2
+#include "433.92/rev_v3.h"  // Rev Switches v3

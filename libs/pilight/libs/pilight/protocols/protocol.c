@@ -15,10 +15,11 @@
   You should have received a copy of the GNU General Public License
   along with library. If not, see <http://www.gnu.org/licenses/>
 
-  Modified by Jorge Rivera Feb 2021:
-  - Add options 
-  - Add devices 
-  - Del char *old_content;
+  Copyright (c) 2021 Jorge Rivera. All right reserved. LGPL-3.0.
+  Feb 2021:
+  - Add options declaration
+  - Add devices declaration and functions
+  - Remove *old_content use. ESPiLight special, used to compare repeated messages
 */
 
 #include <stdio.h>
@@ -72,10 +73,6 @@ void protocol_register(protocol_t **proto) {
 
   (*proto)->raw = NULL;
 
-  /* Arduino special, compare repeated messages*/
-  // Jorge Rivera suprime at feb 2021
-  // (*proto)->old_content = NULL;
-
   struct protocols_t *pnode = MALLOC(sizeof(struct protocols_t));
   if(pnode == NULL) {
     fprintf(stderr, "out of memory\n");
@@ -91,7 +88,7 @@ void protocol_set_id(protocol_t *proto, char *id) {
 }
 
 void protocol_device_add(protocol_t *proto, const char *id, const char *desc) {
-	//logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
+	logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
 
 	struct protocol_devices_t *dnode = MALLOC(sizeof(struct protocol_devices_t));
 
@@ -117,7 +114,7 @@ void protocol_device_add(protocol_t *proto, const char *id, const char *desc) {
 }
 
 int protocol_device_exists(protocol_t *proto, const char *id) {
-	//logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
+	logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
 
 	struct protocol_devices_t *temp = proto->devices;
 
