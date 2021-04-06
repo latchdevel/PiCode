@@ -5,8 +5,8 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-  Modified by Jorge Rivera Feb 2021:
-  - Add logprintf(LOG_NOTICE, "freed options struct\n");
+  Copyright (c) 2021 Jorge Rivera. All right reserved. LGPL-3.0.
+  Feb 2021: - Add logprintf(LOG_NOTICE, "freed options struct\n");
 */
 
 #ifndef _WIN32
