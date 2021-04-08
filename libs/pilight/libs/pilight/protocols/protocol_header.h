@@ -63,3 +63,5 @@
 #include "433.92/rev_v1.h"  // Rev Switches v1
 #include "433.92/rev_v2.h"  // Rev Switches v2
 #include "433.92/rev_v3.h"  // Rev Switches v3
+
+#include "433.92/fanju.h"  // Fanju 3378 Weather Stations

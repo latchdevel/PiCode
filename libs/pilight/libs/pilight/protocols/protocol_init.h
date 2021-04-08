@@ -63,3 +63,5 @@ x10Init();
 rev1Init();  // Rev Switches v1
 rev1Init();  // Rev Switches v2
 rev1Init();  // Rev Switches v3
+
+fanjuInit();  // Fanju 3378 Weather Stations
