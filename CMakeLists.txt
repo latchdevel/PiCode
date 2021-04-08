@@ -17,26 +17,30 @@ if(NOT BUILD_COMPILER)
   MESSAGE( STATUS "Compiler: " ${BUILD_COMPILER} )
 endif()
 
+# Check if has parent directory
+get_directory_property(hasParent PARENT_DIRECTORY)
+
+# Check if set CMAKE_BUILD_TYPE var
 if(NOT CMAKE_BUILD_TYPE)
   # Set default build type to "release" set -O3 -DNDEBUG
   set(DEFAULT_BUILD_TYPE "release")
-
+  SET(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE})
+  MESSAGE( STATUS "Build type set to default: " ${CMAKE_BUILD_TYPE} )
+else()
   # Check if set and valid CMAKE_BUILD_TYPE var
-  if(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE})
-    MESSAGE( STATUS "Build type set to default: " ${CMAKE_BUILD_TYPE} )
-  else()
-    STRING( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE )
-    if((CMAKE_BUILD_TYPE STREQUAL "debug") OR (CMAKE_BUILD_TYPE STREQUAL "release"))
+  STRING( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE )
+  if((CMAKE_BUILD_TYPE STREQUAL "debug") OR (CMAKE_BUILD_TYPE STREQUAL "release"))
+    # If no has parent directory show message
+    if(NOT hasParent)
       MESSAGE( STATUS "Build type set to: " ${CMAKE_BUILD_TYPE} )
-    else()
-    MESSAGE( FATAL_ERROR "If set CMAKE_BUILD_TYPE it must be Release or Debug")
     endif()
+  else()
+    MESSAGE( FATAL_ERROR "If set CMAKE_BUILD_TYPE it must be 'release' or 'debug'")
   endif()
 endif()
 
 # Setting build type to "debug" add only -g 
-if(CMAKE_BUILD_TYPE STREQUAL "debug")
+if(CMAKE_BUILD_TYPE STREQUAL "debug") 
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -DDEBUG")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG")
 endif()
@@ -78,7 +82,6 @@ install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(TARGETS ${PROJECT_NAME}-dynamic DESTINATION lib)
 
 # If no has parent directory, add uninstall targets
-get_directory_property(hasParent PARENT_DIRECTORY)
 if(NOT hasParent)
   MESSAGE(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
   add_custom_target( uninstall
