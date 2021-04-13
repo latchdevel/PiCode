@@ -7,6 +7,10 @@ cmake_minimum_required(VERSION 3.1)
 
 project(picode)
 
+# Set version number for shared libraries and executables
+set(CU_VERSION 1.1) # current version
+set(SO_VERSION 1.0) # compatibility version
+
 # Set C/C++ Standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
@@ -53,9 +57,9 @@ elseif(MSVC)
   set(MSVC_DISABLED_WARNINGS_LIST
     "C4996" # warning C4996: 'may be unsafe/disable deprecation'
             # To disable deprecation, use _CRT_SECURE_NO_WARNINGS.
-    #"C4244" # warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-    #"C4267" # warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-    #"C4305" # warning C4305: '=': truncation from 'int' to 'uint16_t'
+  # "C4244" # warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+  # "C4267" # warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  # "C4305" # warning C4305: '=': truncation from 'int' to 'uint16_t'
     "C5105" # warning C5105: macro expansion producing 'defined' has undefined behavior
     "C4201" # warning C4201: nonstandard extension used: nameless struct/union
     "C4473" # warning C4473: 'printf' : not enough arguments passed for format string
@@ -91,6 +95,21 @@ set_property(TARGET ${PROJECT_NAME}-obj PROPERTY POSITION_INDEPENDENT_CODE 1)
 # File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
 add_library( ${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
 set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME ${PROJECT_NAME} )
+
+# Set version numbers for the versioned shared libraries target.
+# For shared libraries and executables on Windows and Mach-O systems 
+# the SOVERSION property corresponds to the compatibility version 
+# and VERSION corresponds to the current version
+# 
+# Note that SOVERSION will still be used to form the install_name and 
+# both SOVERSION and VERSION may also affect the file and symlink names.
+# Use the NAMELINK_SKIP option of the install command to prevent the 
+# generation of the versionless library name symbolic link to the 
+# versioned library file.
+set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES
+		SOVERSION ${SO_VERSION}
+		VERSION   ${CU_VERSION}
+)
 
 # Add static library libpicode.a
 add_library( ${PROJECT_NAME} STATIC $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
