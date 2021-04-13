@@ -88,7 +88,7 @@ void protocol_set_id(protocol_t *proto, char *id) {
 }
 
 void protocol_device_add(protocol_t *proto, const char *id, const char *desc) {
-	logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
+	//logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
 
 	struct protocol_devices_t *dnode = MALLOC(sizeof(struct protocol_devices_t));
 
@@ -114,7 +114,7 @@ void protocol_device_add(protocol_t *proto, const char *id, const char *desc) {
 }
 
 int protocol_device_exists(protocol_t *proto, const char *id) {
-	logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
+	//logprintf(LOG_STACK, "%s(...)", __FUNCTION__);
 
 	struct protocol_devices_t *temp = proto->devices;
 

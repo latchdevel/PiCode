@@ -345,7 +345,7 @@ char* PiCode::encodeToString(const char* protocol_name, const char* json_data, u
   uint16_t    pulses[255] = {0};
   int         n_pulses    =  0;
 
-  if ((protocol_name != nullptr) and (json_data != nullptr)){
+  if (protocol_name != nullptr  &&  json_data != nullptr ) {
     protocol  = findProtocol(protocol_name);
     if (protocol != nullptr){
       if (protocol->createCode != nullptr){

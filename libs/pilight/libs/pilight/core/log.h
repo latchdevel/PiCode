@@ -28,10 +28,10 @@
 #define LOG_INFO        6
 #define LOG_DEBUG       7
 
-#define LOG_STACK               255
+#define LOG_STACK      255
 
 #include <stdio.h>
 
-#define logprintf(prio, args...) {printf("pilight(%d): ", prio);printf(args);printf("\n");}
+#define logprintf(prio, ...) {printf("pilight(%d): ", prio);printf(__VA_ARGS__);printf("\n");}
 
 #endif
