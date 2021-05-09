@@ -39,7 +39,7 @@
 #include "433.92/logilink_switch.h"
 #include "433.92/mumbi.h"
 #include "433.92/nexus.h"
-#include "433.92/ninjablocks_weather.h"  // (MIN_PULSE_LENGTH*PULSE_DIV) // warning: result of comparison of constant 71910 with expression of type 'uint16_t'
+#include "433.92/ninjablocks_weather.h"
 #include "433.92/pollin.h"
 #include "433.92/quigg_gt1000.h"
 #include "433.92/quigg_gt7000.h"

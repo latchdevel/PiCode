@@ -39,7 +39,7 @@ keruiD026Init();
 logilinkSwitchInit();
 mumbiInit();
 nexusInit();
-ninjablocksWeatherInit();  // (MIN_PULSE_LENGTH*PULSE_DIV) // warning: result of comparison of constant 71910 with expression of type 'uint16_t'
+ninjablocksWeatherInit();
 pollinInit();
 quiggGT1000Init();
 quiggGT7000Init();
