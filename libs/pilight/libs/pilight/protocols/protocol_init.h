@@ -56,7 +56,7 @@ tcmInit();
 techlicoSwitchInit();
 teknihallInit();
 tfaInit();
-tfa2017Init();  // MAX_RAW_LENGTH = 400 // warning: result of comparison of constant 400 with expression of type 'uint8_t' (aka 'unsigned char')
+tfa2017Init();
 tfa30Init();
 x10Init();
 

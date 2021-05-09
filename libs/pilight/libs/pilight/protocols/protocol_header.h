@@ -56,7 +56,7 @@
 #include "433.92/techlico_switch.h"
 #include "433.92/teknihall.h"
 #include "433.92/tfa.h"
-#include "433.92/tfa2017.h"  // MAX_RAW_LENGTH = 400 // warning: result of comparison of constant 400 with expression of type 'uint8_t' (aka 'unsigned char')
+#include "433.92/tfa2017.h"
 #include "433.92/tfa30.h"
 #include "433.92/x10.h"
 
