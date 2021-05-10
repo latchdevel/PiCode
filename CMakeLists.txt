@@ -9,7 +9,7 @@ project(picode)
 
 # Set version number for shared libraries and executables
 set(CU_VERSION 1.1) # current version
-set(SO_VERSION 1.0) # compatibility version
+set(SO_VERSION 1.1) # compatibility version
 
 # Set C/C++ Standard
 set(CMAKE_C_STANDARD 11)
