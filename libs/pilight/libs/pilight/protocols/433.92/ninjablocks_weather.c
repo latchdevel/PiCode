@@ -56,8 +56,8 @@ static struct settings_t *settings = NULL;
 
 static int validate(void) {
 	if(ninjablocks_weather->rawlen >= MIN_RAW_LENGTH && ninjablocks_weather->rawlen <= MAX_RAW_LENGTH) {
-		if(ninjablocks_weather->raw[ninjablocks_weather->rawlen-1] >= (uint16_t)(MIN_PULSE_LENGTH*PULSE_DIV*0.9)  &&
-		   ninjablocks_weather->raw[ninjablocks_weather->rawlen-1] <= (uint16_t)(MAX_PULSE_LENGTH*PULSE_DIV*0.9)) {
+		if(ninjablocks_weather->raw[ninjablocks_weather->rawlen-1] >= (uint32_t)(MIN_PULSE_LENGTH*PULSE_DIV)  &&
+		   ninjablocks_weather->raw[ninjablocks_weather->rawlen-1] <= (uint32_t)(MAX_PULSE_LENGTH*PULSE_DIV)) {
 			return 0;
 		}
 	}

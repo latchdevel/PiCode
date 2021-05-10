@@ -52,16 +52,16 @@ class PiCode {
   protocol_t* findProtocol(const char* name);
 
   /* Convert pulses and lenght to pilight string format. Must be free() after use */
-  char* pulseTrainToString(const uint16_t* pulses, unsigned int length, uint8_t repeats = 0 );
+  char* pulseTrainToString(const uint32_t* pulses, unsigned int length, uint8_t repeats = 0 );
 
   /* Encode protocol and json data to array of pulses if success */
-  int encodeToPulseTrain(uint16_t* pulses, protocol_t* protocol, const char* json_data);
+  int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_data);
 
   /* Convert from pilight string to array of pulses if success */
-  int stringToPulseTrain(const char* data, uint16_t* pulses, size_t maxlength);
+  int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength);
 
   /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
-  char* decodePulseTrain(uint16_t* pulses, uint8_t length, const char* indent = "   ");
+  char* decodePulseTrain(uint32_t* pulses, uint8_t length, const char* indent = "   ");
 
   /* Decode from pilight string. Must be free() after use */
   char* decodeString(const char* pilight_string);

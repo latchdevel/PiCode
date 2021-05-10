@@ -45,8 +45,8 @@
 
 static int validate(void) {
 	if(quigg_gt7000->rawlen == RAW_LENGTH) {
-		if(quigg_gt7000->raw[quigg_gt7000->rawlen-1] >= (uint16_t)(PULSE_QUIGG_FOOTER*0.9) &&
-			 quigg_gt7000->raw[quigg_gt7000->rawlen-1] <= (uint16_t)(PULSE_QUIGG_FOOTER*1.1) &&
+		if(quigg_gt7000->raw[quigg_gt7000->rawlen-1] >= (uint32_t)(PULSE_QUIGG_FOOTER*0.9) &&
+			 quigg_gt7000->raw[quigg_gt7000->rawlen-1] <= (uint32_t)(PULSE_QUIGG_FOOTER*1.1) &&
 			 quigg_gt7000->raw[0] >= MIN_PULSE_LENGTH &&
 			 quigg_gt7000->raw[0] <= MAX_PULSE_LENGTH) {
 		return 0;

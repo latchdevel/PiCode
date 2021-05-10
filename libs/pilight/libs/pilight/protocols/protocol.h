@@ -89,7 +89,7 @@ typedef struct protocol_t {
   unsigned long first;
   unsigned long second;
 
-  uint16_t *raw;
+  uint32_t *raw;
 
   hwtype_t hwtype;
   devtype_t devtype;
