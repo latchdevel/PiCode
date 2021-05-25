@@ -3,6 +3,7 @@
 C++ class to manage OOK protocols supported by [**"pilight"**](https://github.com/pilight/pilight) project.
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Build tests](https://github.com/latchdevel/PiCode/actions/workflows/BuildTest.yml/badge.svg)](https://github.com/latchdevel/PiCode/actions/workflows/BuildTest.yml)
 
 A large number of wireless protocols of RC switches and weather stations using the 433/315Mhz radio frequency band via ASK/OOK pulse modulation are implemented by the excellent work of the "pilight" community. A list of supported protocols can be found in the pilight manual: https://manual.pilight.org/protocols/433.92/index.html
 
