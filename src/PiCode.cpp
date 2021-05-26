@@ -214,7 +214,7 @@ int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlen
       return -2;
     }else{
       strncpy(pulse_str, data+start, (unsigned)end-start);   
-      plstypes[nrpulses++] =  (uint32_t)atoi(pulse_str);
+      plstypes[nrpulses++] =  (uint32_t)atol(pulse_str);
     }
     start = (unsigned)end + 1;
     end = indexOf(data,',', start);
@@ -234,7 +234,7 @@ int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlen
     return -3;
   }else{
     strncpy(pulse_str, data+start, (unsigned)end-start);
-    plstypes[nrpulses++] =  (uint32_t)atoi(pulse_str);
+    plstypes[nrpulses++] =  (uint32_t)atol(pulse_str);
   }
 
   // parsing pulses
