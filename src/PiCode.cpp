@@ -81,7 +81,7 @@ char* PiCode::pulseTrainToString(const uint32_t* pulses, unsigned int length, ui
     match = false;
     for (uint8_t j = 0; j < MAX_PULSE_TYPES; j++) {
       // We device these numbers by 10 to normalize them a bit
-      diff = (plstypes[j] / 50) - (pulses[i] / 50);
+      diff = int((plstypes[j] / 50) - (pulses[i] / 50));
       if ((diff >= -2) && (diff <= 2)) {
         // Write numbers
         sprintf(pulse_str,"%c",(char)('0' + ((char)j))); 
