@@ -21,6 +21,29 @@ if(NOT BUILD_COMPILER)
   MESSAGE( STATUS "Compiler: " ${BUILD_COMPILER} )
 endif()
 
+# Check for git repository information
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+  FIND_PACKAGE(Git)
+  IF(GIT_FOUND)
+    EXECUTE_PROCESS(
+      COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      OUTPUT_VARIABLE "BUILD_VERSION"
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    SET(BUILD_VERSION "${BUILD_VERSION}" )
+    MESSAGE( STATUS "Git commit: ${BUILD_VERSION}")
+  ENDIF(GIT_FOUND)
+ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+
+# Force re-run CMake to set BUILD_VERSION on any git commit
+set_property(
+            DIRECTORY
+            APPEND
+            PROPERTY CMAKE_CONFIGURE_DEPENDS
+            .git/index
+)
+
 # Check if has parent directory
 get_directory_property(hasParent PARENT_DIRECTORY)
 
@@ -130,3 +153,11 @@ endif()
 add_executable( picode_example picode_example.cpp )
 target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} )
 set_target_properties( picode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# If git info available adds to picode_example executable as environment var
+if(DEFINED BUILD_VERSION)
+    target_compile_definitions( picode_example PRIVATE BUILD_VERSION=${BUILD_VERSION} )
+endif(DEFINED BUILD_VERSION)
+
+# Add complier identification to picode_example executable as environment var
+target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )
