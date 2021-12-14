@@ -75,7 +75,7 @@ static void parseCode(void) {
 		}
 	}
 
-	char id[3];
+	char id[4]= {'\0'};
 	int l = letters[binToDecRev(binary, 0, 3)];
 	int s = binary[18];
 	int i = 1;
@@ -89,7 +89,7 @@ static void parseCode(void) {
 	}
 	i += binToDec(binary, 19, 20);
 	if(c1 == 255 && c2 == 255) {
-		sprintf(id, "%c%d", l, i);
+		snprintf(id, sizeof(id), "%c%d", l, i);
 		createMessage(id, s);
 	}
 }
@@ -183,7 +183,7 @@ static int createCode(struct JsonNode *code) {
 	strcpy(id, "-1");
 
 	if(json_find_string(code, "id", &stmp) == 0)
-		strcpy(id, stmp);
+		strncpy(id, stmp, sizeof(id));
 	if(json_find_number(code, "off", &itmp) == 0)
 		state=1;
 	else if(json_find_number(code, "on", &itmp) == 0)
