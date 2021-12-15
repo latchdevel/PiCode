@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.1)
 project(picode)
 
 # Set version number for shared libraries and executables
-set(CU_VERSION 1.1) # current version
+set(CU_VERSION 1.2) # current version
 set(SO_VERSION 1.1) # compatibility version
 
 # Set C/C++ Standard
@@ -132,8 +132,15 @@ set_property(TARGET  ${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1
 set_property(TARGET c${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 # Shared library built from the same object files 
+add_library( 
+                ${PROJECT_NAME}-dynamic SHARED 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common> 
+)
+# C++ PiCode Library v1.2 require the pure C library (dynamic or static) as "c${PROJECT_NAME}-dynamic"
+target_link_libraries(${PROJECT_NAME}-dynamic PUBLIC c${PROJECT_NAME}) 
+
 # File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
-add_library( ${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common>)
 set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME ${PROJECT_NAME} )
 
 # Set version numbers for the versioned shared libraries target.
@@ -151,13 +158,25 @@ set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES
 		VERSION   ${CU_VERSION}
 )
 
-# Add static library libpicode.a
-add_library( ${PROJECT_NAME} STATIC $<TARGET_OBJECTS:${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common> )
+# Add static library 
+# File extension OS depends, like: libpicode.a or libpicode.lib
+add_library( 
+                ${PROJECT_NAME} STATIC 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common> 
+)
+# C++ PiCode Library v1.2 require the pure C library static as "c${PROJECT_NAME}"
+target_link_libraries(${PROJECT_NAME} PUBLIC c${PROJECT_NAME}) 
 
 # Pure C PiCode Library dynamic
+# ---------------------------------------------------------------------------------
 # Shared library built from the same object files 
-# File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
-add_library( c${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common>)
+add_library( 
+              c${PROJECT_NAME}-dynamic SHARED 
+              $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> 
+              $<TARGET_OBJECTS:${PROJECT_NAME}-common>
+)
+# File extension OS depends, like: libcpicode.so or libcpicode.dylib or libcpicode.dll
 set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME c${PROJECT_NAME} )
 
 # Set version numbers for the versioned shared libraries target.
@@ -175,14 +194,20 @@ set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES
 		VERSION   ${CU_VERSION}
 )
 
-# Pure C PiCode Library static libcpicode.a
-add_library( c${PROJECT_NAME} STATIC $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common> )
+# Pure C PiCode Library static 
+# File extension OS depends, like: libcpicode.a or libcpicode.lib
+add_library( 
+                c${PROJECT_NAME} STATIC 
+                $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common>
+)
 
 # Add install targets
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(TARGETS ${PROJECT_NAME}-dynamic DESTINATION lib)
 
 # Pure C PiCode Library install targets
+# ---------------------------------------------------------------------------------
 install(TARGETS c${PROJECT_NAME} DESTINATION lib)
 install(TARGETS c${PROJECT_NAME}-dynamic DESTINATION lib)
 
@@ -208,6 +233,7 @@ endif(DEFINED BUILD_VERSION)
 target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )
 
 # Pure C PiCode Library example
+# ---------------------------------------------------------------------------------
 # Add cpicode_example source file, link static, no build as default 
 add_executable( cpicode_example cpicode_example.c )
 target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} )

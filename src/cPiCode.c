@@ -20,8 +20,11 @@
 /* Declared in protocol.h */
 extern protocols_t* pilight_protocols;
 
-/* Aux find protocol node */
-static protocols_t* find_protocol_node(const char* name) {
+/* Aux functions                                                             */
+/* ------------------------------------------------------------------------- */
+
+/* Find protocol node */
+protocols_t* find_protocol_node(const char* name) {
   if (pilight_protocols==NULL){protocol_init();}
   protocols_t *pnode = pilight_protocols;
   while (pnode != NULL) {
@@ -32,6 +35,17 @@ static protocols_t* find_protocol_node(const char* name) {
   }
   return NULL;
 }
+
+/* Search index of char in char* from String class */
+int indexOf(const char* data, char ch, unsigned int fromIndex) {
+	if (fromIndex >= strlen(data)) return -1;
+	const char* temp = strchr(data + fromIndex, ch);
+	if (temp == NULL) return -1;
+	return (int)(temp - data);
+}
+
+/* Library functions                                                         */
+/* ------------------------------------------------------------------------- */
 
 /* Find protocol by name */
 protocol_t* findProtocol(const char* name) {
@@ -161,14 +175,6 @@ int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_
   return result;
 }
 
-/* Aux indexOf from String class */
-static int indexOf(const char* data, char ch, unsigned int fromIndex) {
-	if (fromIndex >= strlen(data)) return -1;
-	const char* temp = strchr(data + fromIndex, ch);
-	if (temp == NULL) return -1;
-	return (int)(temp - data);
-}
-
 /* Convert from pilight string to array of pulses if success */
 int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
 
@@ -241,7 +247,7 @@ int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
 
 /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
 char* decodePulseTrain(uint32_t* pulses, uint16_t length, const char* indent){
-size_t matches = 0;
+  size_t matches = 0;
 
   char *result = NULL;
 

@@ -67,4 +67,11 @@ char* encodeToString(const char* protocol_name, const char* json_data, uint8_t r
 /* Encode to pilight string from json. Must be free() after use */
 char* encodeJson(const char* json, uint8_t repeats);
 
+/* Aux functions */
+/* Find protocol node */
+protocols_t* find_protocol_node(const char* name);
+
+/* Search index of char in char* from String class */
+int indexOf(const char* data, char ch, unsigned int fromIndex);
+
 #endif
