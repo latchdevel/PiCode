@@ -114,7 +114,7 @@ typedef struct protocols_t {
   struct protocol_t *listener;
   char *name;
   struct protocols_t *next;
-} protocols_;
+} protocols_t;
 
 extern struct protocols_t *pilight_protocols;
 
