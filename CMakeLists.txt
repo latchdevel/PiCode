@@ -94,29 +94,46 @@ elseif(MSVC)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -W4 ${MSVC_DISABLED_WARNINGS_STR}")
 endif()
 
-# Add source directory for sources
-AUX_SOURCE_DIRECTORY( src/ ${PROJECT_NAME}_SRC ) 
+# Add sources for C++ library
+FILE (GLOB ${PROJECT_NAME}_SRC_CPP src/*.cpp )
 
-# Add library aditional sources 
+# Pure C PiCode Library sources
+FILE (GLOB ${PROJECT_NAME}_SRC_C src/*.c )
+
+# Add library common sources 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/core/ CORE ) 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/protocols/ PROTOCOL ) 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/protocols/433.92/ PROTOCOLS ) 
 
-# Compile as object library
+# Compile common library objects
 add_library( 
-                ${PROJECT_NAME}-obj OBJECT
-                ${${PROJECT_NAME}_SRC}
+                ${PROJECT_NAME}-common OBJECT
                 ${CORE}
                 ${PROTOCOL} 
                 ${PROTOCOLS}
 )
 
+# Compile C++ library as object 
+add_library( 
+                ${PROJECT_NAME}-obj OBJECT
+                ${${PROJECT_NAME}_SRC_CPP}
+)
+
+# Pure C PiCode Library compile as object
+add_library( 
+                c${PROJECT_NAME}-obj OBJECT
+                ${${PROJECT_NAME}_SRC_C}
+)
+
 # Shared libraries need flag -fPIC
-set_property(TARGET ${PROJECT_NAME}-obj PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET  ${PROJECT_NAME}-common PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET  ${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1)
+# Pure C PiCode Library
+set_property(TARGET c${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 # Shared library built from the same object files 
 # File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
-add_library( ${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
+add_library( ${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common>)
 set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME ${PROJECT_NAME} )
 
 # Set version numbers for the versioned shared libraries target.
@@ -135,11 +152,39 @@ set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES
 )
 
 # Add static library libpicode.a
-add_library( ${PROJECT_NAME} STATIC $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
+add_library( ${PROJECT_NAME} STATIC $<TARGET_OBJECTS:${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common> )
+
+# Pure C PiCode Library dynamic
+# Shared library built from the same object files 
+# File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
+add_library( c${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common>)
+set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME c${PROJECT_NAME} )
+
+# Set version numbers for the versioned shared libraries target.
+# For shared libraries and executables on Windows and Mach-O systems 
+# the SOVERSION property corresponds to the compatibility version 
+# and VERSION corresponds to the current version
+# 
+# Note that SOVERSION will still be used to form the install_name and 
+# both SOVERSION and VERSION may also affect the file and symlink names.
+# Use the NAMELINK_SKIP option of the install command to prevent the 
+# generation of the versionless library name symbolic link to the 
+# versioned library file.
+set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES
+		SOVERSION ${SO_VERSION}
+		VERSION   ${CU_VERSION}
+)
+
+# Pure C PiCode Library static libcpicode.a
+add_library( c${PROJECT_NAME} STATIC $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> $<TARGET_OBJECTS:${PROJECT_NAME}-common> )
 
 # Add install targets
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(TARGETS ${PROJECT_NAME}-dynamic DESTINATION lib)
+
+# Pure C PiCode Library install targets
+install(TARGETS c${PROJECT_NAME} DESTINATION lib)
+install(TARGETS c${PROJECT_NAME}-dynamic DESTINATION lib)
 
 # If no has parent directory, add uninstall targets
 if(NOT hasParent)
@@ -161,3 +206,17 @@ endif(DEFINED BUILD_VERSION)
 
 # Add complier identification to picode_example executable as environment var
 target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )
+
+# Pure C PiCode Library example
+# Add cpicode_example source file, link static, no build as default 
+add_executable( cpicode_example cpicode_example.c )
+target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} )
+set_target_properties( cpicode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# If git info available adds to cpicode_example executable as environment var
+if(DEFINED BUILD_VERSION)
+    target_compile_definitions( cpicode_example PRIVATE BUILD_VERSION=${BUILD_VERSION} )
+endif(DEFINED BUILD_VERSION)
+
+# Add complier identification to cpicode_example executable as environment var
+target_compile_definitions( cpicode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )
