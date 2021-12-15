@@ -253,7 +253,7 @@ int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlen
 }
 
 /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
-char* PiCode::decodePulseTrain(uint32_t* pulses, uint8_t length, const char* indent){
+char* PiCode::decodePulseTrain(uint32_t* pulses, uint16_t length, const char* indent){
 size_t matches = 0;
 
   char *result = nullptr;
@@ -325,7 +325,7 @@ char* PiCode::decodeString(const char* pilight_string){
   if (pilight_string != nullptr){
      n_pulses = stringToPulseTrain(pilight_string, pulses, 255); 
      if (n_pulses > 0){
-        result = decodePulseTrain(pulses, (uint8_t)n_pulses);
+        result = decodePulseTrain(pulses, (uint16_t)n_pulses);
         if (result!=nullptr){
             if (strlen(result) <  4){ // emply json []
               free(result);
