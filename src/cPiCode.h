@@ -22,6 +22,27 @@
 #include <string.h>     /* strcmp, strcpy, etc. */
 #include <stdlib.h>     /* malloc, free         */
 
+#define STRINGIFY2(X) #X
+#define STRINGIFY(X) STRINGIFY2(X)
+
+#ifndef CU_VERSION
+#define CU_VERSION unknow
+#endif
+
+#ifndef BUILD_VERSION
+#define BUILD_VERSION unknow
+#endif
+
+#ifndef BUILD_COMPILER
+#define BUILD_COMPILER unknow
+#endif
+
+#ifdef DEBUG
+#define BUILD_TYPE "Debug"
+#else
+#define BUILD_TYPE "Release"
+#endif
+
 /* Include protocol.h from pilight sources */
 #include "../libs/pilight/libs/pilight/protocols/protocol.h"
 
@@ -73,5 +94,8 @@ protocols_t* find_protocol_node(const char* name);
 
 /* Search index of char in char* from String class */
 int indexOf(const char* data, char ch, unsigned int fromIndex);
+
+/* Get PiCode libray version. Must be free() after use */
+char* getPiCodeVersion();
 
 #endif

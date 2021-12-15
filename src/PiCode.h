@@ -54,6 +54,9 @@ class PiCode {
   /* Encode to pilight string from json. Must be free() after use */
   char* encodeJson(const char* json, uint8_t repeats = 0);
 
+  /* Get PiCode libray version. Must be free() after use */
+  char* getPiCodeVersion();
+
  private:
     /* Find protocol node */
     protocols_t* find_protocol_node(const char* name);

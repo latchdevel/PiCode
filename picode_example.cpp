@@ -11,29 +11,26 @@
 #include "src/PiCode.h"
 #include <stdio.h> 
 
-#define STRINGIFY2(X) #X
-#define STRINGIFY(X) STRINGIFY2(X)
-
-#ifndef BUILD_VERSION
-#define BUILD_VERSION no git info
-#endif
-
-#ifndef BUILD_COMPILER
-#define BUILD_COMPILER no compiler info
-#endif
-
-#ifdef DEBUG
-#define BUILD_TYPE "Debug"
-#else
-#define BUILD_TYPE "Release"
-#endif
-
 int main(){
 
-    printf("picode_example (%s)\n", STRINGIFY(BUILD_VERSION));
-    printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
-
     int result = 0;
+
+    printf("picode_example (%s)\n", STRINGIFY(BUILD_VERSION));
+    printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
+
+    /* Get PiCode library version */
+
+    char* library_version = PiCode.getPiCodeVersion();
+
+    if (library_version){
+        printf("PiCode library version: %s\n", library_version);
+        free(library_version);
+    }else{
+        printf("ERROR: Unable to get PiCode library version.\n");
+        result--;
+    }
+
+    printf("\n");
 
     /* Decode from pilight string */
 
@@ -75,6 +72,6 @@ int main(){
         printf("ERROR: Unable to encode JSON.\n");
         result--;
     }
-
+    printf("\n");
     return result;
 }

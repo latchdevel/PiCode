@@ -89,3 +89,8 @@ char* PiCode::encodeToString(const char* protocol_name, const char* json_data, u
 char* PiCode::encodeJson(const char* json, uint8_t repeats){
   return ::encodeJson(json, repeats);
 }
+
+/* Get PiCode libray version. Must be free() after use */
+char* PiCode::getPiCodeVersion(){
+  return ::getPiCodeVersion();
+}

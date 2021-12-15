@@ -400,3 +400,19 @@ char* encodeJson(const char* json, uint8_t repeats){
   }
   return result;
 }
+
+/* Get PiCode libray version. Must be free() after use */
+char* getPiCodeVersion(){
+
+  // Reserve dynamic string to return. Must be free() after use //
+  char* version = (char*)malloc( 255 );
+
+  if (version!=NULL){
+    snprintf(version, 255, "v%s-%s", STRINGIFY(CU_VERSION), STRINGIFY(BUILD_VERSION));
+ 
+    // Reduce dynamic memory to only used //
+    version = (char*)realloc(version,strlen(version)+1);
+  }
+
+  return version;
+}

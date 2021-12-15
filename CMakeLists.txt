@@ -124,6 +124,15 @@ add_library(
                 c${PROJECT_NAME}-obj OBJECT
                 ${${PROJECT_NAME}_SRC_C}
 )
+# If git info available adds to pure C PiCode Library
+if(DEFINED BUILD_VERSION)
+    target_compile_definitions( c${PROJECT_NAME}-obj PRIVATE BUILD_VERSION=${BUILD_VERSION} )
+endif()
+
+# If version number for shared libraries and executables available adds to pure C PiCode Library
+if(DEFINED CU_VERSION)
+    target_compile_definitions( c${PROJECT_NAME}-obj PRIVATE CU_VERSION=${CU_VERSION} )
+endif()
 
 # Shared libraries need flag -fPIC
 set_property(TARGET  ${PROJECT_NAME}-common PROPERTY POSITION_INDEPENDENT_CODE 1)
