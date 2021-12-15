@@ -55,8 +55,8 @@ protocol_t* PiCode::findProtocol(const char* name) {
   return nullptr;
 }
 
-/* Convert from array of pulses and lenght to pilight string format. Must be free() after use */
-char* PiCode::pulseTrainToString(const uint32_t* pulses, unsigned int length, uint8_t repeats){
+/* Convert from array of pulses and length to pilight string format. Must be free() after use */
+char* PiCode::pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeats){
   
   bool match = false;
   int  diff  = 0;
@@ -77,7 +77,7 @@ char* PiCode::pulseTrainToString(const uint32_t* pulses, unsigned int length, ui
     strcpy(data,"c:");
   }
 
-  for (unsigned int i = 0; i < length; i++) {
+  for (uint16_t i = 0; i < length; i++) {
     match = false;
     for (uint8_t j = 0; j < MAX_PULSE_TYPES; j++) {
       // We device these numbers by 10 to normalize them a bit
@@ -186,7 +186,7 @@ static int indexOf(const char* data, char ch, unsigned int fromIndex = 0) {
 int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
 
   int          length                    =  0 ;    // length of pulse train
-  unsigned int nrpulses                  =  0 ;    // number of pulse types
+  uint8_t      nrpulses                  =  0 ;    // number of pulse types
   uint32_t     plstypes[MAX_PULSE_TYPES] = {0};    // array to store pulse types
 
   // Aux string to compose data string //
@@ -351,7 +351,7 @@ char* PiCode::encodeToString(const char* protocol_name, const char* json_data, u
       if (protocol->createCode != nullptr){
         n_pulses = encodeToPulseTrain(pulses, protocol, json_data);
         if (n_pulses > 0){
-            result = pulseTrainToString(pulses,(unsigned int)n_pulses, repeats);
+            result = pulseTrainToString(pulses,(uint16_t)n_pulses, repeats);
         }
       }
     }
