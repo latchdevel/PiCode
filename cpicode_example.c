@@ -8,8 +8,10 @@
 
 */
 
-#include "src/cPiCode.h"
-#include <stdio.h> 
+#include <stdio.h>          /* printf()              */
+#include <stdlib.h>         /* free(), uint8_t       */
+
+#include "src/cPiCode.h"    /* Pure C PiCode library */
 
 int main(){
 

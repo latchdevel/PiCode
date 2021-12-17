@@ -18,9 +18,8 @@
 #ifndef CPICODE_H
 #define CPICODE_H
 
-#include <stdio.h>      /* sprintf              */
-#include <string.h>     /* strcmp, strcpy, etc. */
-#include <stdlib.h>     /* malloc, free         */
+#include <stdlib.h>          /* size_t, etc.             */
+#include <inttypes.h>        /* uint8_t, etc.            */
 
 #define STRINGIFY2(X) #X
 #define STRINGIFY(X) STRINGIFY2(X)
@@ -96,6 +95,6 @@ protocols_t* find_protocol_node(const char* name);
 int indexOf(const char* data, char ch, unsigned int fromIndex);
 
 /* Get PiCode libray version. Must be free() after use */
-char* getPiCodeVersion();
+char* getPiCodeVersion(void);
 
 #endif
