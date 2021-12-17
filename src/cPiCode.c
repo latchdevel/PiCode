@@ -30,7 +30,7 @@ extern protocols_t* pilight_protocols;
 /* ------------------------------------------------------------------------- */
 
 /* Find protocol node */
-protocols_t* find_protocol_node(const char* name) {
+static protocols_t* find_protocol_node(const char* name) {
   if (pilight_protocols==NULL){protocol_init();}
   protocols_t *pnode = pilight_protocols;
   while (pnode != NULL) {

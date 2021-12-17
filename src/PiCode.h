@@ -28,7 +28,6 @@ namespace cPiCode {
 }
 
 typedef cPiCode::protocol_t  protocol_t;
-typedef cPiCode::protocols_t protocols_t;
 
 /* Class PiCode                                                              */
 /* ------------------------------------------------------------------------- */
@@ -65,9 +64,6 @@ class PiCode {
   /* Get PiCode libray version. Must be free() after use */
   char* getPiCodeVersion();
 
-private:
-    /* Find protocol node */
-    protocols_t* find_protocol_node(const char* name);
 };
 
 /* Expose a default object instance */

@@ -31,14 +31,6 @@ PiCode::PiCode(){
   }
 }
 
-/* Aux functions and private methods                                         */
-/* ------------------------------------------------------------------------- */
-
-/* Find protocol node (private) */
-protocols_t* PiCode::find_protocol_node(const char* name){
-  return cPiCode::find_protocol_node(name);
-}
-
 /* Public class methods call pure C functions library                        */
 /* ------------------------------------------------------------------------- */
 
