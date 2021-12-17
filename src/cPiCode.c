@@ -43,7 +43,7 @@ protocols_t* find_protocol_node(const char* name) {
 }
 
 /* Search index of char in char* from String class */
-int indexOf(const char* data, char ch, unsigned int fromIndex) {
+static int indexOf(const char* data, char ch, unsigned int fromIndex) {
 	if (fromIndex >= strlen(data)) return -1;
 	const char* temp = strchr(data + fromIndex, ch);
 	if (temp == NULL) return -1;
