@@ -8,8 +8,10 @@
 
 */
 
-#include "src/PiCode.h"
-#include <stdio.h> 
+#include <cstdio>           /* printf()            */
+#include <cinttypes>        /* uint8_t             */
+
+#include "src/PiCode.h"     /* PiCode object class */
 
 int main(){
 
@@ -24,7 +26,7 @@ int main(){
 
     if (library_version){
         printf("PiCode library version: %s\n", library_version);
-        free(library_version);
+        delete(library_version);
     }else{
         printf("ERROR: Unable to get PiCode library version.\n");
         result--;
@@ -45,7 +47,7 @@ int main(){
         printf("Decode string successful:\n");
         printf("%s\n",decoded_string);
 
-        free(decoded_string);
+        delete(decoded_string);
     
     }else{
         printf("ERROR: Unable to decode string.\n");
@@ -66,7 +68,7 @@ int main(){
         printf("Encode successful:\n");
         printf("%s\n",encoded_json_string);
 
-        free(encoded_json_string);
+        delete(encoded_json_string);
     
     }else{
         printf("ERROR: Unable to encode JSON.\n");
