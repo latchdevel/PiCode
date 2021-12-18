@@ -228,10 +228,16 @@ if(NOT hasParent)
   )
 endif()
 
+# Examples
+# ---------------------------------------------------------------------------------
+
 # Add picode_example source file, link static, no build as default 
 add_executable( picode_example picode_example.cpp )
 target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} )
 set_target_properties( picode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# Add executable export symbols for loadable modules to prevent policy CMP0065 warning
+set_property(TARGET picode_example PROPERTY ENABLE_EXPORTS 1)
 
 # If git info available adds to picode_example executable as environment var
 if(DEFINED BUILD_VERSION)
@@ -247,6 +253,9 @@ target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPIL
 add_executable( cpicode_example cpicode_example.c )
 target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} )
 set_target_properties( cpicode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# Add executable export symbols for loadable modules to prevent policy CMP0065 warning
+set_property(TARGET cpicode_example PROPERTY ENABLE_EXPORTS 1)
 
 # If git info available adds to cpicode_example executable as environment var
 if(DEFINED BUILD_VERSION)
