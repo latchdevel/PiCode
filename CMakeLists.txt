@@ -230,10 +230,17 @@ endif()
 
 # Examples
 # ---------------------------------------------------------------------------------
+# Checking for math library 'libm' used when including <math.h> in pilight sources
+find_library(MATH_LIBRARY NAMES m)
+if(MATH_LIBRARY)
+  MESSAGE( STATUS "Math library: " ${MATH_LIBRARY} )
+else()
+  message(FATAL_ERROR "Cannot find math library 'libm' ")
+endif()
 
 # Add picode_example source file, link static, no build as default 
 add_executable( picode_example picode_example.cpp )
-target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} )
+target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} ${MATH_LIBRARY} )
 set_target_properties( picode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
 
 # Add executable export symbols for loadable modules to prevent policy CMP0065 warning
@@ -251,7 +258,7 @@ target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPIL
 # ---------------------------------------------------------------------------------
 # Add cpicode_example source file, link static, no build as default 
 add_executable( cpicode_example cpicode_example.c )
-target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} )
+target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} ${MATH_LIBRARY} )
 set_target_properties( cpicode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
 
 # Add executable export symbols for loadable modules to prevent policy CMP0065 warning
