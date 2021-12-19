@@ -15,7 +15,7 @@ on:
       - 'src/**'
       - 'libs/**'
       - '.github/workflows/*.yml'
-      - 'CMakeList.txt'
+      - 'CMakeLists.txt'
 
   pull_request:
     paths:
@@ -55,19 +55,19 @@ jobs:
       # The matrix will produce one job for each configuration:
       matrix:
         config:
-          - name: 'Linux'
+          - name: 'Linux x86_64'
             os: 'ubuntu-latest'
             bindir: 'echo "BIN_DIR=$BUILD_DIR" >> $GITHUB_ENV'
             static: '*.a'
             dynamic: '*.so'
           
-          - name: 'MacOS'
+          - name: 'MacOS x86_64'
             os: 'macos-latest'
             bindir: 'echo "BIN_DIR=$BUILD_DIR" >> $GITHUB_ENV'
             static: '*.a'
             dynamic: '*.dylib'
   
-          - name: 'Windows'
+          - name: 'Windows x86_64'
             os: 'windows-latest'
             bindir: 'echo "BIN_DIR=$env:BUILD_DIR/$Env:BUILD_TYPE" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append'
             static: '*.lib'
@@ -90,7 +90,7 @@ jobs:
         working-directory: ${{ env.BUILD_DIR }}
         run: cmake .. -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
-      - name: Build Library
+      - name: Build PiCode Library
         working-directory: ${{ env.BUILD_DIR }}
         run: cmake --build . --config ${{ env.BUILD_TYPE }} 
 
@@ -122,5 +122,6 @@ jobs:
           name: "Binaries for ${{ matrix.config.name }}"
           path: |
                 ${{ env.BIN_DIR }}/${{ env.TARGET_TEST }}*
+                ${{ env.BIN_DIR }}/c${{ env.TARGET_TEST }}*
                 ${{ env.BIN_DIR }}/${{ matrix.config.static }}
                 ${{ env.BIN_DIR }}/${{ matrix.config.dynamic }}
