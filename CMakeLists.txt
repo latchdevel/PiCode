@@ -235,7 +235,9 @@ find_library(MATH_LIBRARY NAMES m)
 if(MATH_LIBRARY)
   MESSAGE( STATUS "Math library: " ${MATH_LIBRARY} )
 else()
-  message(FATAL_ERROR "Cannot find math library 'libm' ")
+  if(NOT MSVC)
+    message(FATAL_ERROR "Cannot find math library 'libm' ")
+  endif()
 endif()
 
 # Add picode_example source file, link static, no build as default 
