@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.1)
 project(picode)
 
 # Set version number for shared libraries and executables
-set(CU_VERSION 1.1) # current version
+set(CU_VERSION 1.2) # current version
 set(SO_VERSION 1.1) # compatibility version
 
 # Set C/C++ Standard
@@ -94,29 +94,62 @@ elseif(MSVC)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -W4 ${MSVC_DISABLED_WARNINGS_STR}")
 endif()
 
-# Add source directory for sources
-AUX_SOURCE_DIRECTORY( src/ ${PROJECT_NAME}_SRC ) 
+# Add sources for C++ library
+FILE (GLOB ${PROJECT_NAME}_SRC_CPP src/*.cpp )
 
-# Add library aditional sources 
+# Pure C PiCode Library sources
+FILE (GLOB ${PROJECT_NAME}_SRC_C src/*.c )
+
+# Add library common sources 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/core/ CORE ) 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/protocols/ PROTOCOL ) 
 AUX_SOURCE_DIRECTORY( libs/pilight/libs/pilight/protocols/433.92/ PROTOCOLS ) 
 
-# Compile as object library
+# Compile common library objects
 add_library( 
-                ${PROJECT_NAME}-obj OBJECT
-                ${${PROJECT_NAME}_SRC}
+                ${PROJECT_NAME}-common OBJECT
                 ${CORE}
                 ${PROTOCOL} 
                 ${PROTOCOLS}
 )
 
+# Compile C++ library as object 
+add_library( 
+                ${PROJECT_NAME}-obj OBJECT
+                ${${PROJECT_NAME}_SRC_CPP}
+)
+
+# Pure C PiCode Library compile as object
+add_library( 
+                c${PROJECT_NAME}-obj OBJECT
+                ${${PROJECT_NAME}_SRC_C}
+)
+# If git info available adds to pure C PiCode Library
+if(DEFINED BUILD_VERSION)
+    target_compile_definitions( c${PROJECT_NAME}-obj PRIVATE BUILD_VERSION=${BUILD_VERSION} )
+endif()
+
+# If version number for shared libraries and executables available adds to pure C PiCode Library
+if(DEFINED CU_VERSION)
+    target_compile_definitions( c${PROJECT_NAME}-obj PRIVATE CU_VERSION=${CU_VERSION} )
+endif()
+
 # Shared libraries need flag -fPIC
-set_property(TARGET ${PROJECT_NAME}-obj PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET  ${PROJECT_NAME}-common PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET  ${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1)
+# Pure C PiCode Library
+set_property(TARGET c${PROJECT_NAME}-obj    PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 # Shared library built from the same object files 
+add_library( 
+                ${PROJECT_NAME}-dynamic SHARED 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common> 
+)
+# C++ PiCode Library v1.2 require the pure C library (dynamic or static) as "c${PROJECT_NAME}-dynamic"
+target_link_libraries(${PROJECT_NAME}-dynamic PUBLIC c${PROJECT_NAME}) 
+
 # File extension OS depends, like: libpicode.so or libpicode.dylib or libpicode.dll
-add_library( ${PROJECT_NAME}-dynamic SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
 set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME ${PROJECT_NAME} )
 
 # Set version numbers for the versioned shared libraries target.
@@ -134,12 +167,58 @@ set_target_properties( ${PROJECT_NAME}-dynamic PROPERTIES
 		VERSION   ${CU_VERSION}
 )
 
-# Add static library libpicode.a
-add_library( ${PROJECT_NAME} STATIC $<TARGET_OBJECTS:${PROJECT_NAME}-obj> )
+# Add static library 
+# File extension OS depends, like: libpicode.a or libpicode.lib
+add_library( 
+                ${PROJECT_NAME} STATIC 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common> 
+)
+# C++ PiCode Library v1.2 require the pure C library static as "c${PROJECT_NAME}"
+target_link_libraries(${PROJECT_NAME} PUBLIC c${PROJECT_NAME}) 
+
+# Pure C PiCode Library dynamic
+# ---------------------------------------------------------------------------------
+# Shared library built from the same object files 
+add_library( 
+              c${PROJECT_NAME}-dynamic SHARED 
+              $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> 
+              $<TARGET_OBJECTS:${PROJECT_NAME}-common>
+)
+# File extension OS depends, like: libcpicode.so or libcpicode.dylib or libcpicode.dll
+set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES OUTPUT_NAME c${PROJECT_NAME} )
+
+# Set version numbers for the versioned shared libraries target.
+# For shared libraries and executables on Windows and Mach-O systems 
+# the SOVERSION property corresponds to the compatibility version 
+# and VERSION corresponds to the current version
+# 
+# Note that SOVERSION will still be used to form the install_name and 
+# both SOVERSION and VERSION may also affect the file and symlink names.
+# Use the NAMELINK_SKIP option of the install command to prevent the 
+# generation of the versionless library name symbolic link to the 
+# versioned library file.
+set_target_properties( c${PROJECT_NAME}-dynamic PROPERTIES
+		SOVERSION ${SO_VERSION}
+		VERSION   ${CU_VERSION}
+)
+
+# Pure C PiCode Library static 
+# File extension OS depends, like: libcpicode.a or libcpicode.lib
+add_library( 
+                c${PROJECT_NAME} STATIC 
+                $<TARGET_OBJECTS:c${PROJECT_NAME}-obj> 
+                $<TARGET_OBJECTS:${PROJECT_NAME}-common>
+)
 
 # Add install targets
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(TARGETS ${PROJECT_NAME}-dynamic DESTINATION lib)
+
+# Pure C PiCode Library install targets
+# ---------------------------------------------------------------------------------
+install(TARGETS c${PROJECT_NAME} DESTINATION lib)
+install(TARGETS c${PROJECT_NAME}-dynamic DESTINATION lib)
 
 # If no has parent directory, add uninstall targets
 if(NOT hasParent)
@@ -149,10 +228,27 @@ if(NOT hasParent)
   )
 endif()
 
+# Examples
+# ---------------------------------------------------------------------------------
+# Checking for math library 'libm' used when including <math.h> in pilight sources
+find_library(MATH_LIBRARY NAMES m)
+if(MATH_LIBRARY)
+  MESSAGE( STATUS "Math library: " ${MATH_LIBRARY} )
+else()
+  if(NOT MSVC)
+    message(FATAL_ERROR "Cannot find math library 'libm' ")
+  else()
+    set(MATH_LIBRARY "")
+  endif()
+endif()
+
 # Add picode_example source file, link static, no build as default 
 add_executable( picode_example picode_example.cpp )
-target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} )
+target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} ${MATH_LIBRARY} )
 set_target_properties( picode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# Add executable export symbols for loadable modules to prevent policy CMP0065 warning
+set_property(TARGET picode_example PROPERTY ENABLE_EXPORTS 1)
 
 # If git info available adds to picode_example executable as environment var
 if(DEFINED BUILD_VERSION)
@@ -161,3 +257,21 @@ endif(DEFINED BUILD_VERSION)
 
 # Add complier identification to picode_example executable as environment var
 target_compile_definitions( picode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )
+
+# Pure C PiCode Library example
+# ---------------------------------------------------------------------------------
+# Add cpicode_example source file, link static, no build as default 
+add_executable( cpicode_example cpicode_example.c )
+target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} ${MATH_LIBRARY} )
+set_target_properties( cpicode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
+
+# Add executable export symbols for loadable modules to prevent policy CMP0065 warning
+set_property(TARGET cpicode_example PROPERTY ENABLE_EXPORTS 1)
+
+# If git info available adds to cpicode_example executable as environment var
+if(DEFINED BUILD_VERSION)
+    target_compile_definitions( cpicode_example PRIVATE BUILD_VERSION=${BUILD_VERSION} )
+endif(DEFINED BUILD_VERSION)
+
+# Add complier identification to cpicode_example executable as environment var
+target_compile_definitions( cpicode_example PRIVATE BUILD_COMPILER=${BUILD_COMPILER} )

@@ -18,33 +18,24 @@
 #ifndef PICODE_H
 #define PICODE_H
 
-#include <stdio.h>      /* sprintf              */
-#include <string.h>     /* strcmp, strcpy, etc. */
-#include <stdlib.h>     /* malloc, free         */
+#include <cstdlib>           /* size_t                   */
+#include <cinttypes>         /* uint8_t, etc.            */
 
-extern "C" {
-#include "../libs/pilight/libs/pilight/protocols/protocol.h"
+namespace cPiCode {
+    extern "C" {
+        #include "cPiCode.h" /* Pure C PiCode library header */
+    }
 }
 
-/* pilight string pulse index from 0 to 9 like "c:0123456789;" */
-#define MAX_PULSE_TYPES 10 
+typedef cPiCode::protocol_t         protocol_t;
+typedef cPiCode::protocols_t        protocols_t;
+typedef cPiCode::protocol_devices_t protocol_devices_t;
 
+/* Class PiCode                                                              */
+/* ------------------------------------------------------------------------- */
 class PiCode {
 
  public:
-  /* Error return codes for encodeToPulseTrain()       */
-  static const int ERROR_INVALID_PILIGHT_MSG         = -1;
-  static const int ERROR_INVALID_JSON                = -2;
-  static const int ERROR_UNAVAILABLE_PROTOCOL        = -3;
-
-  /* Error return codes for stringToPulseTrain()     */
-  static const int ERROR_INVALID_PULSETRAIN_MSG_C    = -1;
-  static const int ERROR_INVALID_PULSETRAIN_MSG_P    = -2;
-  static const int ERROR_INVALID_PULSETRAIN_MSG_END  = -3;
-  static const int ERROR_INVALID_PULSETRAIN_MSG_TYPE = -4;
-  static const int ERROR_INVALID_PULSETRAIN_MSG_R    = -5;
-  static const int ERROR_INVALID_PULSETRAIN_MSG      = -6;
-
   /* Constructor */
   PiCode();
 
@@ -72,15 +63,12 @@ class PiCode {
   /* Encode to pilight string from json. Must be free() after use */
   char* encodeJson(const char* json, uint8_t repeats = 0);
 
+  /* Get PiCode libray version. Must be free() after use */
+  char* getPiCodeVersion();
+
   /* Getter for protocols_t* used_protocols */
-  protocols_t* usedProtocols(){return used_protocols;}
+  protocols_t* usedProtocols(){return cPiCode::pilight_protocols;}
 
-private:
-    /* Private property to store used protocol */   
-    protocols_t* used_protocols;
-
-    /* Aux find protocol node */
-    protocols_t* find_protocol_node(const char* name);
 };
 
 /* Expose a default object instance */

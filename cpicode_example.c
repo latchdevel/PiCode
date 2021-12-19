@@ -1,5 +1,5 @@
 /*  
-    Example of using the PiCode Library 
+    Example of using the pure C PiCode Library 
     
     https://github.com/latchdevel/PiCode
 
@@ -8,29 +8,25 @@
 
 */
 
-#include <cstdio>           /* printf()            */
-#include <cstdlib>          /* free()              */
-#include <cinttypes>        /* uint8_t             */
+#include <stdio.h>          /* printf()              */
+#include <stdlib.h>         /* free(), uint8_t       */
 
-#include "src/PiCode.h"     /* PiCode object class */
+#include "src/cPiCode.h"    /* Pure C PiCode library */
 
 int main(){
 
     int result = 0;
 
-    printf("picode_example (%s)\n", STRINGIFY(BUILD_VERSION));
+    printf("cpicode_example (%s)\n", STRINGIFY(BUILD_VERSION));
     printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
 
     /* Get PiCode library version */
 
-    char* library_version = PiCode.getPiCodeVersion();
+    char* library_version = getPiCodeVersion();
 
     if (library_version){
-        
         printf("PiCode library version: %s\n", library_version);
-
         free(library_version);
-
     }else{
         printf("ERROR: Unable to get PiCode library version.\n");
         result--;
@@ -42,7 +38,7 @@ int main(){
 
     char* pilight_string = (char*) "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@";
 
-    char* decoded_string = PiCode.decodeString(pilight_string);
+    char* decoded_string = decodeString(pilight_string);
 
     printf("String to decode: \"%s\"\n",pilight_string);
 
@@ -63,7 +59,7 @@ int main(){
     char*   json    = (char*) "{ 'arctech_switch' : { 'id': 92, 'unit': 0, 'on': 1 }}";
     uint8_t repeats = 5;
 
-    char* encoded_json_string = PiCode.encodeJson(json,repeats);
+    char* encoded_json_string = encodeJson(json,repeats);
 
     printf("\nJSON to encode: \"%s\"\n",json);
 
