@@ -76,7 +76,7 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeat
 
   // Dynamic string to return. Must be free() after use //
   // Reserve max memory      "c:             ;   p:      65535,            ;  r:31;  @\0"
-  char* data = (char*)malloc( 2 + (length) + 1 + 2 + (MAX_PULSE_TYPES*6) + 1 + (5) +  2 );            
+  char* data = (char*)malloc( (size_t)(2 + (length) + 1 + 2 + (MAX_PULSE_TYPES*6) + 1 + (5) +  2) );            
 
   if (!data){
     return NULL;
