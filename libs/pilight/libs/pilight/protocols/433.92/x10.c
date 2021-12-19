@@ -75,7 +75,7 @@ static void parseCode(void) {
 		}
 	}
 
-	char id[4]= {'\0'};
+	char id[6]= {'\0'};
 	int l = letters[binToDecRev(binary, 0, 3)];
 	int s = binary[18];
 	int i = 1;
@@ -89,7 +89,7 @@ static void parseCode(void) {
 	}
 	i += binToDec(binary, 19, 20);
 	if(c1 == 255 && c2 == 255) {
-		snprintf(id, sizeof(id), "%c%d", l, i);
+		snprintf(id, sizeof(id)-1, "%c%d", (char)l, (unsigned char)i);
 		createMessage(id, s);
 	}
 }
@@ -175,7 +175,7 @@ static void createFooter(void) {
 }
 
 static int createCode(struct JsonNode *code) {
-	char id[4] = {'\0'};
+	char id[6] = {'\0'};
 	int state = -1;
 	double itmp = -1;
 	char *stmp = NULL;
@@ -183,7 +183,7 @@ static int createCode(struct JsonNode *code) {
 	strcpy(id, "-1");
 
 	if(json_find_string(code, "id", &stmp) == 0)
-		strncpy(id, stmp, sizeof(id));
+		strncpy(id, stmp, sizeof(id)-1);
 	if(json_find_number(code, "off", &itmp) == 0)
 		state=1;
 	else if(json_find_number(code, "on", &itmp) == 0)
