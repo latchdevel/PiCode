@@ -27,7 +27,9 @@ namespace cPiCode {
     }
 }
 
-typedef cPiCode::protocol_t  protocol_t;
+typedef cPiCode::protocol_t         protocol_t;
+typedef cPiCode::protocols_t        protocols_t;
+typedef cPiCode::protocol_devices_t protocol_devices_t;
 
 /* Class PiCode                                                              */
 /* ------------------------------------------------------------------------- */
@@ -63,6 +65,9 @@ class PiCode {
 
   /* Get PiCode libray version. Must be free() after use */
   char* getPiCodeVersion();
+
+  /* Getter for protocols_t* used_protocols */
+  protocols_t* usedProtocols(){return cPiCode::pilight_protocols;}
 
 };
 
