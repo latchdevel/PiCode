@@ -237,6 +237,8 @@ if(MATH_LIBRARY)
 else()
   if(NOT MSVC)
     message(FATAL_ERROR "Cannot find math library 'libm' ")
+  else()
+    set(MATH_LIBRARY "")
   endif()
 endif()
 
