@@ -94,18 +94,26 @@ jobs:
         working-directory: ${{ env.BUILD_DIR }}
         run: cmake --build . --config ${{ env.BUILD_TYPE }} 
 
-      - name: Build Test ${{ env.TARGET_TEST }}
+      - name: Build C++ test ${{ env.TARGET_TEST }}
         working-directory: ${{ env.BUILD_DIR }}
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: cmake --build . --config ${{ env.BUILD_TYPE }} --target ${{ env.TARGET_TEST }}
+
+      - name: Build C test c${{ env.TARGET_TEST }}
+        working-directory: ${{ env.BUILD_DIR }}
+        # Execute the build.  You can specify a specific target with "--target <NAME>"
+        run: cmake --build . --config ${{ env.BUILD_TYPE }} --target c${{ env.TARGET_TEST }}
 
         # Set BIN_DIR from matrix bindir command
       - name: Setting the binaries directory
         run: ${{ matrix.config.bindir }}
 
         # Execute test
-      - name: Execution Test ${{env.TARGET_TEST}}
+      - name: Execution C++ test ${{env.TARGET_TEST}}
         run: ${{ env.BIN_DIR }}/${{ env.TARGET_TEST }}
+
+      - name: Execution C test c${{env.TARGET_TEST}}
+        run: ${{ env.BIN_DIR }}/c${{ env.TARGET_TEST }}
 
         # Upload binary files to artifacts
       - name: Upload compiled binaries to Artifacts
