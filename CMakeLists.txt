@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.1)
 project(picode)
 
 # Set version number for shared libraries and executables
-set(CU_VERSION 1.2) # current version
+set(CU_VERSION 1.3) # current version
 set(SO_VERSION 1.1) # compatibility version
 
 # Set C/C++ Standard
