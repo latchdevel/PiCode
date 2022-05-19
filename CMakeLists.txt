@@ -254,7 +254,12 @@ target_link_libraries( picode_example PRIVATE ${PROJECT_NAME} ${MATH_LIBRARY} )
 set_target_properties( picode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
 
 # Add executable export symbols for loadable modules to prevent policy CMP0065 warning
-set_property(TARGET picode_example PROPERTY ENABLE_EXPORTS 1)
+# Basic check for BSD based systems, like as FreeBSD, NetBSD, OpenBSD, etc.
+string( TOUPPER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME_UPPER )
+if(NOT CMAKE_SYSTEM_NAME_UPPER MATCHES "BSD")
+  # If not a BSD system, add executable export symbols for loadable modules. Add linker flag "-Wl,--export-dynamic"
+  set_target_properties( picode_example PROPERTIES ENABLE_EXPORTS TRUE ) 
+endif()
 
 # If git info available adds to picode_example executable as environment var
 if(DEFINED BUILD_VERSION)
@@ -272,7 +277,12 @@ target_link_libraries( cpicode_example PRIVATE c${PROJECT_NAME} ${MATH_LIBRARY} 
 set_target_properties( cpicode_example PROPERTIES EXCLUDE_FROM_ALL TRUE )
 
 # Add executable export symbols for loadable modules to prevent policy CMP0065 warning
-set_property(TARGET cpicode_example PROPERTY ENABLE_EXPORTS 1)
+# Basic check for BSD based systems, like as FreeBSD, NetBSD, OpenBSD, etc.
+string( TOUPPER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME_UPPER )
+if(NOT CMAKE_SYSTEM_NAME_UPPER MATCHES "BSD")
+  # If not a BSD system, add executable export symbols for loadable modules. Add linker flag "-Wl,--export-dynamic"
+  set_target_properties( cpicode_example PROPERTIES ENABLE_EXPORTS TRUE ) 
+endif()
 
 # If git info available adds to cpicode_example executable as environment var
 if(DEFINED BUILD_VERSION)
