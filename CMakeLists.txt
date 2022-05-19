@@ -231,7 +231,8 @@ endif()
 # Examples
 # ---------------------------------------------------------------------------------
 # Checking for math library 'libm' used when including <math.h> in pilight sources
-find_library(MATH_LIBRARY NAMES m)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.tbd;.so;.dylib;.dll.a")
+find_library(MATH_LIBRARY NAMES m )
 if(MATH_LIBRARY)
   MESSAGE( STATUS "Math library: " ${MATH_LIBRARY} )
 else()
