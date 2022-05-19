@@ -90,4 +90,7 @@ char* encodeJson(const char* json, uint8_t repeats);
 /* Get PiCode libray version. Must be free() after use */
 char* getPiCodeVersion(void);
 
+/* Getter for protocols_t* pilight_protocols */
+protocols_t* usedProtocols(void);
+
 #endif

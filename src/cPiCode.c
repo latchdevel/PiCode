@@ -422,3 +422,9 @@ char* getPiCodeVersion(void){
 
   return version;
 }
+
+/* Getter for protocols_t* pilight_protocols */
+protocols_t* usedProtocols(void){
+  if (pilight_protocols==NULL){protocol_init();}
+  return pilight_protocols;
+}
