@@ -1,6 +1,8 @@
 # PiCode Library
 
-C++ class to manage OOK protocols supported by [**"pilight"**](https://github.com/pilight/pilight) project.
+C/C++ library to manage OOK protocols supported by [**"pilight"**](https://github.com/pilight/pilight) project.
+
+Works on any libc/libc++ compatible system, like macOS, FreeBSD, Linux, even Windows.
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Build tests](https://github.com/latchdevel/PiCode/actions/workflows/BuildTest.yml/badge.svg)](https://github.com/latchdevel/PiCode/actions/workflows/BuildTest.yml)
@@ -65,7 +67,7 @@ Example: `{"arctech_switch":{"id":92,"unit":0,"on":1}}`
 
 
 ## BUILD
-No external depends, can run on any libc/libc++ compatible system, like MacOS, FreeBSD, Linux, even Windows.
+No external depends, can run on any libc/libc++ compatible system, like macOS, FreeBSD, Linux, even Windows.
  ```
     $ git clone  https://github.com/latchdevel/PiCode (or download .zip)
     $ cd PiCode
@@ -74,11 +76,12 @@ No external depends, can run on any libc/libc++ compatible system, like MacOS, F
     $ cmake .. (or "cmake -DCMAKE_BUILD_TYPE=debug .." for debug)
     $ make
     $ make install (optional)
-    # make picode_example (optional)
+    # make picode_example (optional C++ example)
+    # make cpicode_example (optional C example)
     $ make uninstall (to uninstall)
 ```
 
-## Example
+## C++ example
 ```cpp
 /*  
     Example of using the PiCode Library 
@@ -90,16 +93,43 @@ No external depends, can run on any libc/libc++ compatible system, like MacOS, F
 
 */
 
-#include "src/PiCode.h"
-#include <stdio.h> 
+#include <cstdio>           /* printf()            */
+#include <cstdlib>          /* free()              */
+#include <cinttypes>        /* uint8_t             */
+
+#include "src/PiCode.h"     /* PiCode object class */
 
 int main(){
+
+    int result = 0;
+
+    printf("picode_example (%s)\n", STRINGIFY(BUILD_VERSION));
+    printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
+
+    /* Get PiCode library version */
+
+    char* library_version = PiCode.getPiCodeVersion();
+
+    if (library_version){
+        
+        printf("PiCode library version: %s\n", library_version);
+
+        free(library_version);
+
+    }else{
+        printf("ERROR: Unable to get PiCode library version.\n");
+        result--;
+    }
+
+    printf("\n");
 
     /* Decode from pilight string */
 
     char* pilight_string = (char*) "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@";
 
     char* decoded_string = PiCode.decodeString(pilight_string);
+
+    printf("String to decode: \"%s\"\n",pilight_string);
 
     if (decoded_string){
 
@@ -109,7 +139,8 @@ int main(){
         free(decoded_string);
     
     }else{
-        printf("Unable to decode string\n");
+        printf("ERROR: Unable to decode string.\n");
+        result--;
     }
 
     /* Encode to pilight string from json */
@@ -119,6 +150,8 @@ int main(){
 
     char* encoded_json_string = PiCode.encodeJson(json,repeats);
 
+    printf("\nJSON to encode: \"%s\"\n",json);
+
     if (encoded_json_string){
 
         printf("Encode successful:\n");
@@ -127,15 +160,100 @@ int main(){
         free(encoded_json_string);
     
     }else{
-        printf("Unable to encode\n");
+        printf("ERROR: Unable to encode JSON.\n");
+        result--;
+    }
+    printf("\n");
+    return result;
+}
+```
+
+## C example
+```c
+/*  
+    Example of using the pure C PiCode Library 
+    
+    https://github.com/latchdevel/PiCode
+
+    Copyright (c) 2021 Jorge Rivera. All right reserved.
+    License GNU Lesser General Public License v3.0.
+
+*/
+
+#include <stdio.h>          /* printf()              */
+#include <stdlib.h>         /* free(), uint8_t       */
+
+#include "src/cPiCode.h"    /* Pure C PiCode library */
+
+int main(){
+
+    int result = 0;
+
+    printf("cpicode_example (%s)\n", STRINGIFY(BUILD_VERSION));
+    printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
+
+    /* Get PiCode library version */
+
+    char* library_version = getPiCodeVersion();
+
+    if (library_version){
+        printf("PiCode library version: %s\n", library_version);
+        free(library_version);
+    }else{
+        printf("ERROR: Unable to get PiCode library version.\n");
+        result--;
     }
 
-    return 0;
+    printf("\n");
+
+    /* Decode from pilight string */
+
+    char* pilight_string = (char*) "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@";
+
+    char* decoded_string = decodeString(pilight_string);
+
+    printf("String to decode: \"%s\"\n",pilight_string);
+
+    if (decoded_string){
+
+        printf("Decode string successful:\n");
+        printf("%s\n",decoded_string);
+
+        free(decoded_string);
+    
+    }else{
+        printf("ERROR: Unable to decode string.\n");
+        result--;
+    }
+
+    /* Encode to pilight string from json */
+
+    char*   json    = (char*) "{ 'arctech_switch' : { 'id': 92, 'unit': 0, 'on': 1 }}";
+    uint8_t repeats = 5;
+
+    char* encoded_json_string = encodeJson(json,repeats);
+
+    printf("\nJSON to encode: \"%s\"\n",json);
+
+    if (encoded_json_string){
+
+        printf("Encode successful:\n");
+        printf("%s\n",encoded_json_string);
+
+        free(encoded_json_string);
+    
+    }else{
+        printf("ERROR: Unable to encode JSON.\n");
+        result--;
+    }
+    printf("\n");
+    return result;
 }
 ```
 
 ## Output
 ```
+String to decode: "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@"
 Decode string successful:
 [{
    "conrad_rsl_switch": {
@@ -144,12 +262,14 @@ Decode string successful:
       "state": "on"
    }
 }]
+
+JSON to encode: "{ 'arctech_switch' : { 'id': 92, 'unit': 0, 'on': 1 }}"
 Encode successful:
-c:010002000200020002000200020002000200020002000200020002000200020002000200020002020000020200020002000002000200020200000200020002000203;p:315,2835,1260,10710;r:5
+c:010002000200020002000200020002000200020002000200020002000200020002000200020002020000020200020002000002000200020200000200020002000203;p:315,2835,1260,10710;r:5@
 ```
 
 # License
-Copyright (c) 2021 Jorge Rivera. All right reserved.
+Copyright (c) 2021-2022 Jorge Rivera. All right reserved.
 
 License GNU Lesser General Public License v3.0.
 
