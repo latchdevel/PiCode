@@ -94,6 +94,11 @@ elseif(MSVC)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -W4 ${MSVC_DISABLED_WARNINGS_STR}")
 endif()
 
+# If macOS builds a Mach-O universal binary with 2 architectures: x86_64 and arm64 for Apple M processors
+if (APPLE) 
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+endif()
+
 # Add sources for C++ library
 FILE (GLOB ${PROJECT_NAME}_SRC_CPP src/*.cpp )
 
