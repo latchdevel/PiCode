@@ -55,7 +55,7 @@ int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlen
 }
 
 /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
-char* PiCode::decodePulseTrain(uint32_t* pulses, uint16_t length, const char* indent){
+char* PiCode::decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* indent){
   return cPiCode::decodePulseTrain(pulses, length, indent);
 }
 

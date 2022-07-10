@@ -52,7 +52,7 @@ class PiCode {
   int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength);
 
   /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
-  char* decodePulseTrain(uint32_t* pulses, uint16_t length, const char* indent = "   ");
+  char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* indent = "   ");
 
   /* Decode from pilight string. Must be free() after use */
   char* decodeString(const char* pilight_string);
