@@ -34,8 +34,28 @@
 
 struct protocols_t *pilight_protocols = NULL;
 
+// Add global var to store max possible number of pulses of all protocols initiated protocols
+uint16_t pilight_maxpulses = 0;
+
 void protocol_init(void) {
   #include "protocol_init.h"
+
+  protocol_t*         listener = NULL; 
+  protocols_t*        pnode    = pilight_protocols;
+
+  // Locate max possible number of pulses of all protocols initiated protocols
+  while (pnode != NULL) {
+    listener = pnode->listener;
+    if (listener->maxrawlen > pilight_maxpulses ) pilight_maxpulses = listener->maxrawlen;
+    //printf("Protocol: %-20s maxrawlen: %3d\n",listener->id,listener->maxrawlen);
+    pnode = pnode->next;
+  }
+}
+
+// Getter for max possible number of pulses of all protocols initiated protocols
+uint16_t protocol_maxrawlen(void){
+  if (pilight_protocols==NULL){protocol_init();}
+  return pilight_maxpulses;
 }
 
 void protocol_register(protocol_t **proto) {

@@ -118,6 +118,9 @@ typedef struct protocols_t {
 
 extern struct protocols_t *pilight_protocols;
 
+// Add getter for max possible number of pulses of all protocols initiated protocols
+uint16_t protocol_maxrawlen(void);
+
 void protocol_init(void);
 void protocol_set_id(protocol_t *proto, char *id);
 void protocol_register(protocol_t **proto);
