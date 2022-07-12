@@ -72,6 +72,9 @@ class PiCode {
   /* Getter for protocols_t* used_protocols */
   protocols_t* usedProtocols(){return cPiCode::pilight_protocols;}
 
+  /* Getter for max possible number of pulses from protocol.h */
+  uint16_t protocol_maxrawlen(){return cPiCode::protocol_maxrawlen();}
+
 };
 
 /* Expose a default object instance */
