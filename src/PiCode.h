@@ -48,6 +48,9 @@ class PiCode {
   /* Encode protocol and json data to array of pulses if success */
   int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_data);
 
+  /* Encode from protocol name and json data to array of pulses if success */
+  int encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const char* json_data);
+
   /* Convert from pilight string to array of pulses if success */
   int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength);
 

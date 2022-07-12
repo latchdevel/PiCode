@@ -181,6 +181,18 @@ int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_
   return result;
 }
 
+/* Encode from protocol name and json data to array of pulses if success */
+int encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const char* json_data){
+
+  protocol_t* protocol = NULL; 
+
+  protocol = findProtocol(protocol_name);
+
+  if (protocol == NULL) return ERROR_UNAVAILABLE_PROTOCOL;
+
+  return encodeToPulseTrain(pulses, protocol, json_data);
+}
+
 /* Convert from pilight string to array of pulses if success */
 int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
 
