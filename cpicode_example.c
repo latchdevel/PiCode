@@ -74,6 +74,46 @@ int main(){
         printf("ERROR: Unable to encode JSON.\n");
         result--;
     }
+
+    /* Encode from protocol name and json data to array of pulses if success */
+
+    char* protocol_name = (char*) "arctech_switch";
+    char* json_data     = (char*) "{'id': 92, 'unit': 0, 'on': 1}";
+
+    uint32_t*   pulses     = NULL;
+    uint16_t  n_pulses_max = 0;
+    int       n_pulses     = 0;
+
+    n_pulses_max = protocol_maxrawlen();
+
+    pulses = (uint32_t*)malloc(sizeof *pulses * (n_pulses_max + 1));
+
+    if (pulses != NULL){
+
+        printf("\nEncode protocol: \"%s\" JSON data: \"%s\"\n",protocol_name,json_data);
+        
+        n_pulses = encodeToPulseTrainByName(pulses, protocol_name, json_data);
+
+        if (n_pulses>0){
+            printf("Encode successful:\n");
+            printf("pulses[%d]={",n_pulses);
+            for (int i = 0; i<n_pulses; i++){
+                printf("%d",pulses[i]);
+                if (i<n_pulses-1){
+                    printf(",");
+                }else{
+                    printf("};\n");
+                }
+            }
+        }else{
+            printf("ERROR: Unable to encode (%i)\n",n_pulses);
+        }
+        free(pulses);
+    }else{
+        printf("ERROR: out of memory (%d)) \n",n_pulses_max);
+        result--;
+    }
+
     printf("\n");
     return result;
 }
