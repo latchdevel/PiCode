@@ -50,6 +50,11 @@
 #define MAX_PULSE_TYPES 10 
 #endif
 
+/* Define max size of array to store pulses */
+#ifndef MAX_PULSES
+#define MAX_PULSES   8448  // Livolo protocol
+#endif
+
 /* Error return codes for encodeToPulseTrain() */
 #define ERROR_INVALID_PILIGHT_MSG              -1
 #define ERROR_INVALID_JSON                     -2

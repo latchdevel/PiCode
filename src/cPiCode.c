@@ -330,12 +330,12 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
 /* Decode from pilight string. Must be free() after use */
 char* decodeString(const char* pilight_string){
 
-  char*    result      = NULL;
-  uint32_t pulses[255] = {0};
-  int      n_pulses    =  0;
+  char*    result             = NULL;
+  uint32_t pulses[MAX_PULSES] = {0};
+  int      n_pulses           =  0;
 
   if (pilight_string != NULL){
-     n_pulses = stringToPulseTrain(pilight_string, pulses, 255); 
+     n_pulses = stringToPulseTrain(pilight_string, pulses, MAX_PULSES); 
      if (n_pulses > 0){
         result = decodePulseTrain(pulses, (uint16_t)n_pulses, "   ");
         if (result!=NULL){
@@ -352,10 +352,10 @@ char* decodeString(const char* pilight_string){
 /* Encode to pilight string. Must be free() after use */
 char* encodeToString(const char* protocol_name, const char* json_data, uint8_t repeats){
 
-  char*       result      = NULL;  
-  protocol_t* protocol    = NULL;
-  uint32_t    pulses[255] = {0};
-  int         n_pulses    =  0;
+  char*       result             = NULL;  
+  protocol_t* protocol           = NULL;
+  uint32_t    pulses[MAX_PULSES] = {0};
+  int         n_pulses           =  0;
 
   if (protocol_name != NULL  &&  json_data != NULL ) {
     protocol  = findProtocol(protocol_name);
