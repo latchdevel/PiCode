@@ -361,14 +361,22 @@ char* encodeToString(const char* protocol_name, const char* json_data, uint8_t r
 
   char*       result             = NULL;  
   protocol_t* protocol           = NULL;
-  uint32_t    pulses[MAX_PULSES] = {0};
   int         n_pulses           =  0;
+
+  // Max possible number of pulses from protocol.h
+  uint16_t    maxlength = protocol_maxrawlen();
+
+  // Dynamic array of pulses
+  uint32_t    pulses[maxlength]; 
+  
+  // Clear array of pulses
+  memset(pulses,0,maxlength);
 
   if (protocol_name != NULL  &&  json_data != NULL ) {
     protocol  = findProtocol(protocol_name);
     if (protocol != NULL){
       if (protocol->createCode != NULL){
-        n_pulses = encodeToPulseTrain(pulses, MAX_PULSES, protocol, json_data);
+        n_pulses = encodeToPulseTrain(pulses, maxlength, protocol, json_data);
         if (n_pulses > 0){
             result = pulseTrainToString(pulses,(uint16_t)n_pulses, repeats);
         }
