@@ -96,7 +96,7 @@ int main(){
 
         printf("\nEncode protocol: \"%s\" JSON data: \"%s\"\n",protocol_name,json_data);
         
-        n_pulses = PiCode.encodeToPulseTrainByName(pulses, protocol_name, json_data);
+        n_pulses = PiCode.encodeToPulseTrainByName(pulses, n_pulses_max, protocol_name, json_data);
 
         if (n_pulses>0){
             printf("Encode successful:\n");

@@ -135,7 +135,7 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeat
 }
 
 /* Encode protocol and json parameters to array of pulses if success */
-int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_data){
+int encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data){
 
   int result = ERROR_UNAVAILABLE_PROTOCOL;
 
@@ -157,23 +157,30 @@ int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_
   if (!json_validate(n_json)) {
     result = ERROR_INVALID_JSON;
   }else{
-    if ( (protocol != NULL) && (protocol->createCode != NULL) ) {  // always (protocol->maxrawlen <= std::numeric_limits<typeof(protocol->maxrawlen)>::max()
+    if (protocol != NULL) {
+      if (protocol->createCode != NULL) {      // Check if protocol can encode
+        if (protocol->maxrawlen < maxlength){  // Check if array size is enough
+          protocol->rawlen = 0;
+          protocol->raw = pulses;
 
-      protocol->rawlen = 0;
-      protocol->raw = pulses;
+          JsonNode *message = json_decode(n_json);
+          int return_value = protocol->createCode(message);
 
-      JsonNode *message = json_decode(n_json);
-      int return_value = protocol->createCode(message);
+          json_delete(message);
+          // delete message created by createCode()
+          json_delete(protocol->message);
+          protocol->message = NULL;
 
-      json_delete(message);
-      // delete message created by createCode()
-      json_delete(protocol->message);
-      protocol->message = NULL;
-
-      if (return_value == EXIT_SUCCESS) {
-        result = protocol->rawlen;
-      } else {
-        result = ERROR_INVALID_PILIGHT_MSG;
+          if (return_value == EXIT_SUCCESS) {
+            result = protocol->rawlen;
+          } else {
+            result = ERROR_INVALID_PILIGHT_MSG;
+          }
+        }else{
+          result = ERROR_NOT_ENOUGH_PULSES_ARRAY_SIZE;
+        }
+      }else{
+        result = ERROR_PROTOCOL_CANNNOT_ENCODE;
       }
     }
   }
@@ -182,7 +189,7 @@ int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_
 }
 
 /* Encode from protocol name and json data to array of pulses if success */
-int encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const char* json_data){
+int encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data){
 
   protocol_t* protocol = NULL; 
 
@@ -190,7 +197,7 @@ int encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const 
 
   if (protocol == NULL) return ERROR_UNAVAILABLE_PROTOCOL;
 
-  return encodeToPulseTrain(pulses, protocol, json_data);
+  return encodeToPulseTrain(pulses, maxlength, protocol, json_data);
 }
 
 /* Convert from pilight string to array of pulses if success */
@@ -361,7 +368,7 @@ char* encodeToString(const char* protocol_name, const char* json_data, uint8_t r
     protocol  = findProtocol(protocol_name);
     if (protocol != NULL){
       if (protocol->createCode != NULL){
-        n_pulses = encodeToPulseTrain(pulses, protocol, json_data);
+        n_pulses = encodeToPulseTrain(pulses, MAX_PULSES, protocol, json_data);
         if (n_pulses > 0){
             result = pulseTrainToString(pulses,(uint16_t)n_pulses, repeats);
         }

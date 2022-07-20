@@ -45,13 +45,13 @@ char* PiCode::pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_
 }
 
 /* Encode protocol and json parameters to array of pulses if success */
-int PiCode::encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_data){
-  return cPiCode::encodeToPulseTrain(pulses, protocol, json_data);
+int PiCode::encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data){
+  return cPiCode::encodeToPulseTrain(pulses, maxlength, protocol, json_data);
 }
 
 /* Encode from protocol name and json data to array of pulses if success */
-int PiCode::encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const char* json_data){
-  return cPiCode::encodeToPulseTrainByName(pulses, protocol_name, json_data);
+int PiCode::encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data){
+  return cPiCode::encodeToPulseTrainByName(pulses, maxlength, protocol_name, json_data);
 }
 
 /* Convert from pilight string to array of pulses if success */

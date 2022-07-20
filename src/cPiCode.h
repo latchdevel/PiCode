@@ -59,6 +59,8 @@
 #define ERROR_INVALID_PILIGHT_MSG              -1
 #define ERROR_INVALID_JSON                     -2
 #define ERROR_UNAVAILABLE_PROTOCOL             -3
+#define ERROR_PROTOCOL_CANNNOT_ENCODE          -4
+#define ERROR_NOT_ENOUGH_PULSES_ARRAY_SIZE     -5
 
 /* Error return codes for stringToPulseTrain() */
 #define ERROR_INVALID_PULSETRAIN_MSG_C         -1
@@ -75,10 +77,10 @@ protocol_t* findProtocol(const char* name);
 char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeats);
 
 /* Encode protocol and json data to array of pulses if success */
-int encodeToPulseTrain(uint32_t* pulses, protocol_t* protocol, const char* json_data);
+int encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data);
 
 /* Encode from protocol name and json data to array of pulses if success */
-int encodeToPulseTrainByName(uint32_t* pulses, const char* protocol_name, const char* json_data);
+int encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data);
 
 /* Convert from pilight string to array of pulses if success */
 int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength);
