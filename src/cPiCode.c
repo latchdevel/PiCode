@@ -133,6 +133,193 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t rep
   return data;
 }
 
+/* Convert from array of pulses and length to normalized pilight string format. Must be free() after use */
+char* normalizedPulseTrainToString(const uint32_t* pulses, uint16_t maxlength){
+
+  char* picode = NULL;    // To return the picode string, must be free after use.
+
+  uint16_t max_pulses = maxlength+1; // Prevent overflow if add pulse if odd
+
+  // Local array to store pulse train (nomarlized and typed) 
+  struct { 
+    uint32_t pulse_raw_length;
+    uint8_t  pulse_type_index;
+  } normalized_pulses[max_pulses]; 
+
+  // Local index of pulse train array
+  uint16_t index;
+
+  // Local index of pulse types array
+  uint8_t pulse_type_index = 0;
+
+  // Local array to store average length each pulse type
+  float pulse_types[MAX_PULSE_TYPES] = {0.0};
+
+  // Indentify pulse types
+  for ( index = 0 ; index < maxlength; index ++){
+    if (pulse_type_index == 0){ // First pulse
+
+        // Store raw pulse length
+        pulse_types[pulse_type_index] = (float)pulses[index];
+        
+        // Store pulse type
+        normalized_pulses[index].pulse_type_index = pulse_type_index;
+
+        // Ready for next pulse type
+        pulse_type_index++;
+
+        // Check for max pulse types overflow
+        if (pulse_type_index > MAX_PULSE_TYPES){
+          return NULL;
+        }
+    }else{
+        uint8_t new_pulse = 0;
+
+        for (uint8_t i = 0; i < pulse_type_index; i ++){
+
+            // Check if pulse length match with stored pulse types
+            if (((float)pulses[index] <= pulse_types[i]*(1+MAX_PULSE_DRIFT)) && ((float)pulses[index] >= pulse_types[i]*(1-MAX_PULSE_DRIFT))) {
+                
+                // Update pulse type average length
+                pulse_types[i] = (pulse_types[i]+(float)pulses[index])/2.0;
+  
+                // Store pulse type
+                normalized_pulses[index].pulse_type_index = i;
+
+                new_pulse = 1;
+                break;
+            }
+
+        }
+
+        // No match, add new pulse type
+        if (new_pulse == 0){
+
+            // Store raw pulse length
+            pulse_types[pulse_type_index] = (float)pulses[index];
+
+            // Store pulse type
+            normalized_pulses[index].pulse_type_index = pulse_type_index;
+
+            // Ready for next pulse type
+            pulse_type_index++;
+
+            // Check for max pulse types overflow
+            if (pulse_type_index > MAX_PULSE_TYPES){
+              return NULL;
+            }
+        }
+    }
+  }
+
+  // Ready to process 
+  
+  // Type (index) of footer pulse
+  uint8_t footer_type   = 0;
+
+  // Normalized length of footer pulse 
+  uint32_t footer_length = 0;
+
+  // Count of footer pulses
+  uint8_t footer_count  = 0;
+  
+  // Aux var to store pulse length normalized to tens of usecs
+  uint32_t normalized;
+
+  // Local array to store normalized length each pulse type
+  uint32_t pulse_types_normalized[MAX_PULSE_TYPES] = {0};
+
+  for (uint8_t t = 0; t < pulse_type_index ; t ++){
+
+      // Pulse lenght in usecs form average
+      normalized = (uint32_t)pulse_types[t];
+
+      // Normalized pulse length to tens of usecs
+      normalized = (normalized/10 + (normalized%10>=10/2)) * 10;
+
+      // Ensure minimal pulse length to 10
+      if (normalized < 10) normalized = 10;
+
+      //printf("[ENCODER] Pulse type:  %d average length: %9.3f (usecs) normalized to: %5d (usecs)\n",t, pulse_types[t], normalized) ;
+
+      // Populate normalized pulse types array
+      pulse_types_normalized[t]=normalized;
+
+      // Identify footer pulse length and type index
+      if (normalized> footer_length){
+          footer_type = t;
+          footer_length = normalized;
+      }
+  }
+
+  for ( index = 0 ; index < maxlength; index ++){
+
+      // Populate normalized pulses array with normalized pulse length
+      normalized_pulses[index].pulse_raw_length = pulse_types_normalized[normalized_pulses[index].pulse_type_index];
+
+      // Count of footer pulses
+      if (normalized_pulses[index].pulse_type_index == footer_type){
+          footer_count++;
+      }
+  }
+
+  //printf("[ENCODER] Footer type: %d lenght: %d count: %d\n",footer_type, footer_length, footer_count);
+
+  // Check if number of pulses is even
+  if (maxlength%2!=0) {
+      // Add footer pulse
+      normalized_pulses[maxlength].pulse_type_index = footer_type;
+      normalized_pulses[maxlength].pulse_raw_length = footer_length;
+      maxlength++;
+      footer_count++;
+      //printf("[ENCODER] Pulse count is odd, adding a footer pulse\n");
+  }
+
+  //printf("[ENCODER] Total pulses: %d footer pulses: %d\n",maxlength,footer_count);
+
+  // PiCode encoding process
+
+  // Aux string to compose data string //
+  char pulse_str[11] = {0};        
+
+  // String for normalized pulse types, size max_pulses+1
+  char normalized_pulses_string[max_pulses+1];
+
+  // Ensure to clear normalized pulse types string
+  memset(normalized_pulses_string,0, sizeof normalized_pulses_string );
+
+  // Charge normalized pulse types string
+  for (index = 0; index<maxlength; index++){
+      normalized_pulses_string[index] = normalized_pulses[index].pulse_type_index+'0';
+  }
+
+  // Dynamic string to return. Must be free() after use //
+  // Reserve max memory           "c:                ;   p:      4294967295,         @\0"
+  picode = (char*)malloc( (size_t)(2 + (maxlength) + 1 + 2 + (pulse_type_index*11) +  2 ));    
+
+  if (picode){
+
+    // Add header and pulses
+    sprintf(picode,"c:%s;p:",normalized_pulses_string);
+   
+    // Add pulse types
+    for (uint8_t i = 0; i < pulse_type_index; i++){
+        sprintf(pulse_str, "%d", pulse_types_normalized[i]); 
+        strcat(picode, pulse_str);
+        if (i + 1 < pulse_type_index) {
+            strcat(picode, "," );
+        }else{
+           strcat(picode, "@" );
+        }
+    }
+
+    // Reduce dynamic memory to only used //
+    picode = (char*)realloc(picode,strlen(picode)+1);
+  }
+  
+  return picode;
+}
+
 /* Encode protocol and json parameters to array of pulses if success */
 int encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data){
 

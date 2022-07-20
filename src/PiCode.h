@@ -44,6 +44,9 @@ class PiCode {
   /* Convert pulses and length to pilight string format. Must be free() after use */
   char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t repeats = 0 );
 
+  /* Convert from array of pulses and length to normalized pilight string format. Must be free() after use */
+  char* normalizedPulseTrainToString(const uint32_t* pulses, uint16_t maxlength);
+
   /* Encode protocol and json data to array of pulses if success */
   int encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data);
 

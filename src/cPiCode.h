@@ -54,6 +54,11 @@
 #define MAX_PULSES   8448  // Livolo protocol
 #endif
 
+// Define pulse length drift as percent for normalized
+#ifndef MAX_PULSE_DRIFT
+#define MAX_PULSE_DRIFT     0.1
+#endif
+
 /* Error return codes for encodeToPulseTrain() */
 #define ERROR_INVALID_PILIGHT_MSG              -1
 #define ERROR_INVALID_JSON                     -2
@@ -74,6 +79,9 @@ protocol_t* findProtocol(const char* name);
 
 /* Convert pulses and length to pilight string format. Must be free() after use */
 char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t repeats);
+
+/* Convert from array of pulses and length to normalized pilight string format. Must be free() after use */
+char* normalizedPulseTrainToString(const uint32_t* pulses, uint16_t maxlength);
 
 /* Encode protocol and json data to array of pulses if success */
 int encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data);
