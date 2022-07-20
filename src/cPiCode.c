@@ -19,7 +19,6 @@
 #include <string.h>          /* strcmp(), strcpy(), etc. */
 #include <stdlib.h>          /* malloc(), free(), etc.   */
 #include <inttypes.h>        /* uint8_t, etc.            */
-#include <stdbool.h>         /* bool type                */
 
 #include "cPiCode.h"         /* Pure C PiCode library .h */
 
