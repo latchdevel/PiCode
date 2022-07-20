@@ -40,22 +40,22 @@ protocol_t* PiCode::findProtocol(const char* name) {
 }
 
 /* Convert from array of pulses and length to pilight string format. Must be free() after use */
-char* PiCode::pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeats){
-  return cPiCode::pulseTrainToString(pulses, length, repeats);
+char* PiCode::pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t repeats){
+  return cPiCode::pulseTrainToString(pulses, maxlength, repeats);
 }
 
 /* Encode protocol and json parameters to array of pulses if success */
-int PiCode::encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data){
+int PiCode::encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data){
   return cPiCode::encodeToPulseTrain(pulses, maxlength, protocol, json_data);
 }
 
 /* Encode from protocol name and json data to array of pulses if success */
-int PiCode::encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data){
+int PiCode::encodeToPulseTrainByName(uint32_t* pulses, uint16_t maxlength, const char* protocol_name, const char* json_data){
   return cPiCode::encodeToPulseTrainByName(pulses, maxlength, protocol_name, json_data);
 }
 
 /* Convert from pilight string to array of pulses if success */
-int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
+int PiCode::stringToPulseTrain(const char* data, uint32_t* pulses, uint16_t maxlength){
   return cPiCode::stringToPulseTrain(data, pulses, maxlength);
 }
 

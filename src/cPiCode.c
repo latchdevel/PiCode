@@ -63,7 +63,7 @@ protocol_t* findProtocol(const char* name) {
 }
 
 /* Convert from array of pulses and length to pilight string format. Must be free() after use */
-char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeats){
+char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t repeats){
   
   bool match = false;
   int  diff  = 0;
@@ -76,7 +76,7 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeat
 
   // Dynamic string to return. Must be free() after use //
   // Reserve max memory      "c:             ;   p:      65535,            ;  r:31;  @\0"
-  char* data = (char*)malloc( (size_t)(2 + (length) + 1 + 2 + (MAX_PULSE_TYPES*6) + 1 + (5) +  2) );            
+  char* data = (char*)malloc( (size_t)(2 + (maxlength) + 1 + 2 + (MAX_PULSE_TYPES*6) + 1 + (5) +  2) );            
 
   if (!data){
     return NULL;
@@ -84,7 +84,7 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeat
     strcpy(data,"c:");
   }
 
-  for (uint16_t i = 0; i < length; i++) {
+  for (uint16_t i = 0; i < maxlength; i++) {
     match = false;
     for (uint8_t j = 0; j < MAX_PULSE_TYPES; j++) {
       // We device these numbers by 10 to normalize them a bit
@@ -135,7 +135,7 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeat
 }
 
 /* Encode protocol and json parameters to array of pulses if success */
-int encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data){
+int encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data){
 
   int result = ERROR_UNAVAILABLE_PROTOCOL;
 
@@ -189,7 +189,7 @@ int encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol,
 }
 
 /* Encode from protocol name and json data to array of pulses if success */
-int encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data){
+int encodeToPulseTrainByName(uint32_t* pulses, uint16_t maxlength, const char* protocol_name, const char* json_data){
 
   protocol_t* protocol = NULL; 
 
@@ -201,7 +201,7 @@ int encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* pro
 }
 
 /* Convert from pilight string to array of pulses if success */
-int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
+int stringToPulseTrain(const char* data, uint32_t* pulses, uint16_t maxlength){
 
   int          length                    =  0 ;    // length of pulse train
   uint8_t      nrpulses                  =  0 ;    // number of pulse types
@@ -272,7 +272,7 @@ int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength){
 
 /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
 char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* indent){
-  size_t matches = 0;
+  uint16_t matches = 0;
 
   char *result = NULL;
 
@@ -326,7 +326,7 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
     result = json_encode(output_json);
   }
 
-  for (size_t i = 0 ; i<matches; i++){
+  for (uint16_t i = 0 ; i<matches; i++){
     json_delete(json_first_child(output_json));
   }
   json_delete(output_json);

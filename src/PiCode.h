@@ -18,7 +18,6 @@
 #ifndef PICODE_H
 #define PICODE_H
 
-#include <cstdlib>           /* size_t                   */
 #include <cinttypes>         /* uint8_t, etc.            */
 
 namespace cPiCode {
@@ -43,16 +42,16 @@ class PiCode {
   protocol_t* findProtocol(const char* name);
 
   /* Convert pulses and length to pilight string format. Must be free() after use */
-  char* pulseTrainToString(const uint32_t* pulses, uint16_t length, uint8_t repeats = 0 );
+  char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t repeats = 0 );
 
   /* Encode protocol and json data to array of pulses if success */
-  int encodeToPulseTrain(uint32_t* pulses, size_t maxlength, protocol_t* protocol, const char* json_data);
+  int encodeToPulseTrain(uint32_t* pulses, uint16_t maxlength, protocol_t* protocol, const char* json_data);
 
   /* Encode from protocol name and json data to array of pulses if success */
-  int encodeToPulseTrainByName(uint32_t* pulses, size_t maxlength, const char* protocol_name, const char* json_data);
+  int encodeToPulseTrainByName(uint32_t* pulses, uint16_t maxlength, const char* protocol_name, const char* json_data);
 
   /* Convert from pilight string to array of pulses if success */
-  int stringToPulseTrain(const char* data, uint32_t* pulses, size_t maxlength);
+  int stringToPulseTrain(const char* data, uint32_t* pulses, uint16_t maxlength);
 
   /* Decode from array of pulses to json as dynamic char*. Must be free() after use */
   char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* indent = "   ");
