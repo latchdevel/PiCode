@@ -71,11 +71,11 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t rep
   uint32_t plstypes[MAX_PULSE_TYPES] = {0};  // array to store pulse types
 
   // Aux string to compose data string //
-  char pulse_str[6] = {0};      
+  char pulse_str[11] = {0};      
 
   // Dynamic string to return. Must be free() after use //
-  // Reserve max memory      "c:             ;   p:      65535,            ;  r:31;  @\0"
-  char* data = (char*)malloc( (size_t)(2 + (maxlength) + 1 + 2 + (MAX_PULSE_TYPES*6) + 1 + (5) +  2) );            
+  // Reserve max memory      "c:             ;   p:      4294967295,            ;  r:31;  @\0"
+  char* data = (char*)malloc( (size_t)(2 + (maxlength) + 1 + 2 + (MAX_PULSE_TYPES*11) + 1 + (5) +  2) );            
 
   if (!data){
     return NULL;
