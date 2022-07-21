@@ -67,6 +67,9 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t rep
   bool match = false;
   int  diff  = 0;
 
+  // Check for maxlength
+  if (maxlength < 2) return NULL;
+
   uint8_t  nrpulses                  =  0 ;  // number of pulse types
   uint32_t plstypes[MAX_PULSE_TYPES] = {0};  // array to store pulse types
 
@@ -137,6 +140,9 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t rep
 char* normalizedPulseTrainToString(const uint32_t* pulses, uint16_t maxlength){
 
   char* picode = NULL;    // To return the picode string, must be free after use.
+
+  // Check for maxlength
+  if (maxlength < 1 ) return NULL;
 
   uint16_t max_pulses = maxlength+1; // Prevent overflow if add pulse if odd
 
