@@ -32,6 +32,10 @@
 
 #include <stdio.h>
 
+#if defined(DEBUG)
 #define logprintf(prio, ...) {printf("pilight(%d): ", prio);printf(__VA_ARGS__);printf("\n");}
+#else
+#define logprintf(prio, ...)
+#endif
 
 #endif
