@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *livolo_switch;
+static struct protocol_t *livolo_switch;
 void livoloSwitchInit(void);
 
 #endif

@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *eurodomest_switch;
+static struct protocol_t *eurodomest_switch;
 void eurodomestSwitchInit(void);
 
 #endif

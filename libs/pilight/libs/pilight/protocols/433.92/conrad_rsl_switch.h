@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *conrad_rsl_switch;
+static struct protocol_t *conrad_rsl_switch;
 void conradRSLSwitchInit(void);
 
 #endif

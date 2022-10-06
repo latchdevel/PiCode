@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *selectremote;
+static struct protocol_t *selectremote;
 void selectremoteInit(void);
 
 #endif

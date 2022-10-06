@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *ehome;
+static struct protocol_t *ehome;
 void ehomeInit(void);
 
 #endif

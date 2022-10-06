@@ -197,7 +197,7 @@ int supercodes[2*NRSUPERCODES] = {
 	/* ON codes */
 	0x0F005,0x1F008,0x4F015,0x5F018,0x8F025,0x9F028,0xCF02C,0xDF03C };
 
-char bincode[BIN_LENGTH+1];
+static char bincode[BIN_LENGTH+1];
 
 static void createMessage(int id, int unit, int state, int seq, int learn) {
 	int i = 0;

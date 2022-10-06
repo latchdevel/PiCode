@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *heitech;
+static struct protocol_t *heitech;
 void heitechInit(void);
 
 #endif

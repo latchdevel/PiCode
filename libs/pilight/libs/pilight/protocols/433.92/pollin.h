@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *pollin;
+static struct protocol_t *pollin;
 void pollinInit(void);
 
 #endif

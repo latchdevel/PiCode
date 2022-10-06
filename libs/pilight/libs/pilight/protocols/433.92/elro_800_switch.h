@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *elro_800_switch;
+static struct protocol_t *elro_800_switch;
 void elro800SwitchInit(void);
 
 #endif

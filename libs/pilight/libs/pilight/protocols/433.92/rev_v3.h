@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *rev3_switch;
+static struct protocol_t *rev3_switch;
 void rev3Init(void);
 
 #endif

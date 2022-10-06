@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *beamish_switch;
+static struct protocol_t *beamish_switch;
 void beamishSwitchInit(void);
 
 #endif

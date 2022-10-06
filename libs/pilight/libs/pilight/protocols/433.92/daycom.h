@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *daycom;
+static struct protocol_t *daycom;
 void daycomInit(void);
 
 #endif
