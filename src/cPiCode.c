@@ -347,52 +347,72 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
 /* Decode from pilight string. Must be free() after use */
 char* decodeString(const char* pilight_string){
 
-  char*    result             = NULL;
-  uint32_t pulses[MAX_PULSES] = {0};
-  int      n_pulses           =  0;
+  char*       result = NULL;
+  uint32_t*   pulses = NULL;
+  int       n_pulses =    0;
 
-  if (pilight_string != NULL){
-     n_pulses = stringToPulseTrain(pilight_string, pulses, MAX_PULSES); 
-     if (n_pulses > 0){
-        result = decodePulseTrain(pulses, (uint16_t)n_pulses, "   ");
-        if (result!=NULL){
-            if (strlen(result) <  23){ // new emply json { "protocols": [] }
-              free(result);
-              result=NULL;
-            }
-        } 
-     }
+  // Max possible number of pulses from protocol.h
+  uint16_t maxlength = protocol_maxrawlen();
+
+  // Dynamic array of pulses
+  pulses = (uint32_t*)malloc(sizeof *pulses * (maxlength));
+
+  if (pulses != NULL){
+
+    // Clear array of pulses
+    memset(pulses,0,maxlength);
+
+    if (pilight_string != NULL){
+      n_pulses = stringToPulseTrain(pilight_string, pulses, maxlength); 
+      if (n_pulses > 0){
+          result = decodePulseTrain(pulses, (uint16_t)n_pulses, "   ");
+          if (result!=NULL){
+              if (strlen(result) <  23){ // new emply json { "protocols": [] }
+                free(result);
+                result=NULL;
+              }
+          } 
+      }
+    }
+    free(pulses);
   }
+
   return result;
 }
 
 /* Encode to pilight string. Must be free() after use */
 char* encodeToString(const char* protocol_name, const char* json_data, uint8_t repeats){
 
-  char*       result             = NULL;  
-  protocol_t* protocol           = NULL;
-  int         n_pulses           =  0;
+  char*          result = NULL;  
+  protocol_t*  protocol = NULL;
+  uint32_t*      pulses = NULL;
+  int          n_pulses =    0;
 
   // Max possible number of pulses from protocol.h
   uint16_t    maxlength = protocol_maxrawlen();
 
   // Dynamic array of pulses
-  uint32_t    pulses[maxlength]; 
-  
-  // Clear array of pulses
-  memset(pulses,0,maxlength);
+  pulses = (uint32_t*)malloc(sizeof *pulses * (maxlength));
 
-  if (protocol_name != NULL  &&  json_data != NULL ) {
-    protocol  = findProtocol(protocol_name);
-    if (protocol != NULL){
-      if (protocol->createCode != NULL){
-        n_pulses = encodeToPulseTrain(pulses, maxlength, protocol, json_data);
-        if (n_pulses > 0){
-            result = pulseTrainToString(pulses,(uint16_t)n_pulses, repeats);
+  if (pulses != NULL){
+  
+    // Clear array of pulses
+    memset(pulses,0,maxlength);
+
+    if (protocol_name != NULL  &&  json_data != NULL ) {
+      protocol  = findProtocol(protocol_name);
+      if (protocol != NULL){
+        if (protocol->createCode != NULL){
+          n_pulses = encodeToPulseTrain(pulses, maxlength, protocol, json_data);
+          if (n_pulses > 0){
+              result = pulseTrainToString(pulses,(uint16_t)n_pulses, repeats);
+          }
         }
       }
     }
+    free(pulses);
   }
+
   return result;
 }
 
