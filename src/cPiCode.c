@@ -67,6 +67,9 @@ char* pulseTrainToString(const uint32_t* pulses, uint16_t maxlength, uint8_t rep
   bool match = false;
   int  diff  = 0;
 
+  // Check for maxlength
+  if (maxlength < 2) return NULL;
+  
   uint8_t  nrpulses                  =  0 ;  // number of pulse types
   uint32_t plstypes[MAX_PULSE_TYPES] = {0};  // array to store pulse types
 
