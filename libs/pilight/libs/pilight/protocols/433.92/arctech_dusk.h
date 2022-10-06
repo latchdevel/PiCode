@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *arctech_dusk;
+static struct protocol_t *arctech_dusk;
 void arctechDuskInit(void);
 
 #endif

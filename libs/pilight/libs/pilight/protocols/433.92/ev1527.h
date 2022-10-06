@@ -21,7 +21,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *ev1527;
+static struct protocol_t *ev1527;
 void ev1527Init(void);
 
 #endif

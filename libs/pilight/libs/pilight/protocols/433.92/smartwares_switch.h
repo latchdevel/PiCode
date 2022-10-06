@@ -11,7 +11,7 @@
 
 #include "../protocol.h"
 
-struct protocol_t *smartwares_switch;
+static struct protocol_t *smartwares_switch;
 void smartwaresSwitchInit(void);
 
 #endif
