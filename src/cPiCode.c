@@ -282,7 +282,7 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
   if (pilight_protocols==NULL){protocol_init();}
   protocols_t *pnode = pilight_protocols;
 
-  JsonNode  *output_json = json_mkarray();
+  JsonNode  *output_array = json_mkarray();
 
   JsonNode  *protocol_json = NULL;
   JsonNode  *message_json = NULL;
@@ -311,7 +311,7 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
           json_clone(protocol->message, &message_json);
           
           json_append_member(protocol_json, protocol->id, message_json );
-          json_append_element(output_json , protocol_json);
+          json_append_element(output_array , protocol_json);
 
           json_delete(protocol->message);
           protocol->message = NULL;
@@ -322,6 +322,12 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
     pnode = pnode->next;
   }
   
+  JsonNode *output_json = json_mkobject();
+  JsonNode *json_array = json_mkobject();
+
+  json_clone(output_array, &json_array);
+  json_append_member(output_json, "protocols", json_array);
+
   if (strlen(indent)>0){
     result = json_stringify(output_json, indent);
   }else{
@@ -329,8 +335,10 @@ char* decodePulseTrain(const uint32_t* pulses, uint16_t length, const char* inde
   }
 
   for (uint16_t i = 0 ; i<matches; i++){
-    json_delete(json_first_child(output_json));
+    json_delete(json_first_child(output_array));
   }
+  json_delete(output_array);
+  json_delete(json_array);
   json_delete(output_json);
 
   return result;
@@ -348,7 +356,7 @@ char* decodeString(const char* pilight_string){
      if (n_pulses > 0){
         result = decodePulseTrain(pulses, (uint16_t)n_pulses, "   ");
         if (result!=NULL){
-            if (strlen(result) <  4){ // emply json []
+            if (strlen(result) <  23){ // new emply json { "protocols": [] }
               free(result);
               result=NULL;
             }
