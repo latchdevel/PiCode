@@ -1,15 +1,15 @@
 # PiCode Library
 # https://github.com/latchdevel/PiCode
-# Copyright (c) 2021 Jorge Rivera. All right reserved.
+# Copyright (c) 2021-2022 Jorge Rivera. All right reserved.
 # License GNU Lesser General Public License v3.0.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.18)
 
 project(picode)
 
 # Set version number for shared libraries and executables
-set(CU_VERSION 1.3) # current version
-set(SO_VERSION 1.1) # compatibility version
+set(CU_VERSION 1.4) # current version
+set(SO_VERSION 1.4) # compatibility version
 
 # Set C/C++ Standard
 set(CMAKE_C_STANDARD 11)
@@ -74,15 +74,16 @@ endif()
 
 # Set C++ flags
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -Wextra -Wno-unused-parameter -fcommon")
+  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -Wno-sign-compare -fcommon")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wconversion -Woverloaded-virtual -Wsign-conversion")
 elseif(MSVC)
   set(MSVC_DISABLED_WARNINGS_LIST
     "C4996" # warning C4996: 'may be unsafe/disable deprecation'
             # To disable deprecation, use _CRT_SECURE_NO_WARNINGS.
-  # "C4244" # warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-  # "C4267" # warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+    "C4244" # warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+    "C4267" # warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   # "C4305" # warning C4305: '=': truncation from 'int' to 'uint16_t'
+    "C4018" # warning C4018: '>': signed/unsigned mismatch
     "C5105" # warning C5105: macro expansion producing 'defined' has undefined behavior
     "C4201" # warning C4201: nonstandard extension used: nameless struct/union
     "C4473" # warning C4473: 'printf' : not enough arguments passed for format string
