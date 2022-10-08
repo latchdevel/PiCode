@@ -359,8 +359,8 @@ char* decodeString(const char* pilight_string){
 
   if (pulses != NULL){
 
-    // Clear array of pulses
-    memset(pulses,0,maxlength);
+    // Clean array of pulses
+    for (uint16_t i = 0; i < maxlength; i++) pulses[i] = 0;
 
     if (pilight_string != NULL){
       n_pulses = stringToPulseTrain(pilight_string, pulses, maxlength); 
@@ -396,8 +396,8 @@ char* encodeToString(const char* protocol_name, const char* json_data, uint8_t r
 
   if (pulses != NULL){
   
-    // Clear array of pulses
-    memset(pulses,0,maxlength);
+    // Clean array of pulses
+    for (uint16_t i = 0; i < maxlength; i++) pulses[i] = 0;
 
     if (protocol_name != NULL  &&  json_data != NULL ) {
       protocol  = findProtocol(protocol_name);
