@@ -24,41 +24,45 @@ pilight string: `c:0100020002000200020002000200020002000200020002000200020002000
 
 decode as:
 ```json
-[{
-  "smartwares_switch": {
-    "id": 92,
-    "unit": 0,
-    "state": "on"
-  }
-},
 {
-  "arctech_switch": {
-    "id": 92,
-    "unit": 0,
-    "state": "on"
-  }
-},
-{
-  "arctech_screen": {
-    "id": 92,
-    "unit": 0,
-    "state": "up"
-  }
-},
-{
-  "arctech_dimmer": {
-    "id": 92,
-    "unit": 0,
-    "state": "on"
-  }
-},
-{
-  "arctech_contact": {
-    "id": 92,
-    "unit": 0,
-    "state": "opened"
-  }
-}]
+  "protocols": [
+    {
+      "arctech_contact": {
+        "id": 92,
+        "unit": 0,
+        "state": "opened"
+      }
+    },
+    {
+      "arctech_dimmer": {
+        "id": 92,
+        "unit": 0,
+        "state": "on"
+      }
+    },
+    {
+      "arctech_screen": {
+        "id": 92,
+        "unit": 0,
+        "state": "up"
+      }
+    },
+    {
+      "arctech_switch": {
+        "id": 92,
+        "unit": 0,
+        "state": "on"
+      }
+    },
+    {
+      "smartwares_switch": {
+        "id": 92,
+        "unit": 0,
+        "state": "on"
+      }
+    }
+  ]
+}
 ```
 
 To encode to pilight string, you must provide the protocol and custom parameters of that protocol in json format.
@@ -69,7 +73,7 @@ Example: `{"arctech_switch":{"id":92,"unit":0,"on":1}}`
 ## BUILD
 No external depends, can run on any libc/libc++ compatible system, like macOS, FreeBSD, Linux, even Windows.
  ```
-    $ git clone  https://github.com/latchdevel/PiCode (or download .zip)
+    $ git clone https://github.com/latchdevel/PiCode (or download .zip)
     $ cd PiCode
     $ mkdir build
     $ cd build
@@ -81,92 +85,6 @@ No external depends, can run on any libc/libc++ compatible system, like macOS, F
     $ make uninstall (to uninstall)
 ```
 
-## C++ example
-```cpp
-/*  
-    Example of using the PiCode Library 
-    
-    https://github.com/latchdevel/PiCode
-
-    Copyright (c) 2021 Jorge Rivera. All right reserved.
-    License GNU Lesser General Public License v3.0.
-
-*/
-
-#include <cstdio>           /* printf()            */
-#include <cstdlib>          /* free()              */
-#include <cinttypes>        /* uint8_t             */
-
-#include "src/PiCode.h"     /* PiCode object class */
-
-int main(){
-
-    int result = 0;
-
-    printf("picode_example (%s)\n", STRINGIFY(BUILD_VERSION));
-    printf("Compiled at " __DATE__ " " __TIME__ " %s (%s)\n",STRINGIFY(BUILD_COMPILER), BUILD_TYPE );
-
-    /* Get PiCode library version */
-
-    char* library_version = PiCode.getPiCodeVersion();
-
-    if (library_version){
-        
-        printf("PiCode library version: %s\n", library_version);
-
-        free(library_version);
-
-    }else{
-        printf("ERROR: Unable to get PiCode library version.\n");
-        result--;
-    }
-
-    printf("\n");
-
-    /* Decode from pilight string */
-
-    char* pilight_string = (char*) "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@";
-
-    char* decoded_string = PiCode.decodeString(pilight_string);
-
-    printf("String to decode: \"%s\"\n",pilight_string);
-
-    if (decoded_string){
-
-        printf("Decode string successful:\n");
-        printf("%s\n",decoded_string);
-
-        free(decoded_string);
-    
-    }else{
-        printf("ERROR: Unable to decode string.\n");
-        result--;
-    }
-
-    /* Encode to pilight string from json */
-
-    char*   json    = (char*) "{ 'arctech_switch' : { 'id': 92, 'unit': 0, 'on': 1 }}";
-    uint8_t repeats = 5;
-
-    char* encoded_json_string = PiCode.encodeJson(json,repeats);
-
-    printf("\nJSON to encode: \"%s\"\n",json);
-
-    if (encoded_json_string){
-
-        printf("Encode successful:\n");
-        printf("%s\n",encoded_json_string);
-
-        free(encoded_json_string);
-    
-    }else{
-        printf("ERROR: Unable to encode JSON.\n");
-        result--;
-    }
-    printf("\n");
-    return result;
-}
-```
 
 ## C example
 ```c
@@ -246,6 +164,46 @@ int main(){
         printf("ERROR: Unable to encode JSON.\n");
         result--;
     }
+
+    /* Encode from protocol name and json data to array of pulses if success */
+
+    char* protocol_name = (char*) "arctech_switch";
+    char* json_data     = (char*) "{'id': 92, 'unit': 0, 'on': 1}";
+
+    uint32_t*   pulses     = NULL;
+    uint16_t  n_pulses_max = 0;
+    int       n_pulses     = 0;
+
+    n_pulses_max = protocol_maxrawlen();
+
+    pulses = (uint32_t*)malloc(sizeof *pulses * (n_pulses_max + 1));
+
+    if (pulses != NULL){
+
+        printf("\nEncode protocol: \"%s\" JSON data: \"%s\"\n",protocol_name,json_data);
+        
+        n_pulses = encodeToPulseTrainByName(pulses, n_pulses_max, protocol_name, json_data);
+
+        if (n_pulses>0){
+            printf("Encode successful:\n");
+            printf("pulses[%d]={",n_pulses);
+            for (int i = 0; i<n_pulses; i++){
+                printf("%d",pulses[i]);
+                if (i<n_pulses-1){
+                    printf(",");
+                }else{
+                    printf("};\n");
+                }
+            }
+        }else{
+            printf("ERROR: Unable to encode (%i)\n",n_pulses);
+        }
+        free(pulses);
+    }else{
+        printf("ERROR: out of memory (%d)) \n",n_pulses_max);
+        result--;
+    }
+
     printf("\n");
     return result;
 }
@@ -253,19 +211,28 @@ int main(){
 
 ## Output
 ```
+Compiled at Oct  6 2022 23:10:26 AppleClang 13.0.0.13000029 (Release)
+PiCode library version: v1.4
+
 String to decode: "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@"
 Decode string successful:
-[{
-   "conrad_rsl_switch": {
-      "id": 1,
-      "unit": 2,
-      "state": "on"
-   }
-}]
+{
+   "protocols": [{
+      "conrad_rsl_switch": {
+         "id": 1,
+         "unit": 2,
+         "state": "on"
+      }
+   }]
+}
 
 JSON to encode: "{ 'arctech_switch' : { 'id': 92, 'unit': 0, 'on': 1 }}"
 Encode successful:
 c:010002000200020002000200020002000200020002000200020002000200020002000200020002020000020200020002000002000200020200000200020002000203;p:315,2835,1260,10710;r:5@
+
+Encode protocol: "arctech_switch" JSON data: "{'id': 92, 'unit': 0, 'on': 1}"
+Encode successful:
+pulses[132]={315,2835,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,1260,315,315,315,315,315,1260,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,1260,315,315,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,315,315,1260,315,10710};
 ```
 
 # License
