@@ -211,8 +211,9 @@ int main(){
 
 ## Output
 ```
+picode_example (539485e)
 Compiled at Oct  6 2022 23:10:26 AppleClang 13.0.0.13000029 (Release)
-PiCode library version: v1.4
+PiCode library version: v1.4-539485e
 
 String to decode: "c:011010100101011010100110101001100110010101100110101010101010101012;p:1400,600,6800@"
 Decode string successful:
