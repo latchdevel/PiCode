@@ -1,7 +1,9 @@
 # Compiler outputs 
-build 
+build
+build-*
 
 # Visual Studio Code
+.devcontainer
 .vscode/
 *.code-workspace
 .history/
